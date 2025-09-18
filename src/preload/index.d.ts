@@ -1,8 +1,13 @@
 import { ElectronAPI } from '@electron-toolkit/preload'
 
+export interface Api {
+  // Define your custom API methods and properties here
+  ping: () => void
+}
+
 declare global {
   interface Window {
     electron: ElectronAPI
-    api: unknown
+    api: Api
   }
 }
