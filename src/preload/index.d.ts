@@ -5,6 +5,7 @@ export interface Api {
   ping: () => void;
   openFBLogin: () => Promise<boolean>;
   checkForFBSession: () => Promise<boolean>;
+  fbLogOut: () => Promise<void>;
 }
 
 declare global {

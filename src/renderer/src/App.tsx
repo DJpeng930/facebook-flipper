@@ -28,6 +28,11 @@ function App() {
     setLoggedIn(res);
     console.log("Login success:", res);
   }
+  async function handleLogout() {
+    await window.api.fbLogOut();
+    setLoggedIn(false);
+    console.log("Logged out");
+  }
 
   return (
     <div className="bg-muted flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
@@ -36,6 +41,7 @@ function App() {
           FacebookScraper
           <Button onClick={handleLogin}>Log in</Button>
           <Button onClick={handleClick}>Check login status</Button>
+          <Button onClick={handleLogout}>Log out</Button>
           <Label>{loggedIn ? "Logged in" : "Not logged in"}</Label>
         </a>
       </div>

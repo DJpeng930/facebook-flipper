@@ -1,7 +1,7 @@
 import { contextBridge, ipcRenderer } from "electron";
 import { electronAPI } from "@electron-toolkit/preload";
-import { Api } from "./index.d";
 import { IPC_EVENTS } from "../shared/ipc-events";
+import type { Api } from "./index.d";
 
 // Custom APIs for renderer
 const api: Api = {
@@ -14,6 +14,10 @@ const api: Api = {
 
   checkForFBSession: () => {
     return ipcRenderer.invoke(IPC_EVENTS.CHECK_FOR_FB_SESSION);
+  },
+
+  fbLogOut: () => {
+    return ipcRenderer.invoke(IPC_EVENTS.FB_LOG_OUT);
   }
 };
 

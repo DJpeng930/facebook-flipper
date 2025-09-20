@@ -1,6 +1,7 @@
 export const IPC_EVENTS = {
   OPEN_FB_LOGIN: "OPEN_FB_LOGIN",
-  CHECK_FOR_FB_SESSION: "CHECK_FOR_FB_SESSION"
+  CHECK_FOR_FB_SESSION: "CHECK_FOR_FB_SESSION",
+  FB_LOG_OUT: "FB_LOG_OUT"
 } as const;
 
 export type IPCEventNames = (typeof IPC_EVENTS)[keyof typeof IPC_EVENTS];
