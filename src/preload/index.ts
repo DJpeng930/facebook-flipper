@@ -2,6 +2,7 @@ import { contextBridge, ipcRenderer } from "electron";
 import { electronAPI } from "@electron-toolkit/preload";
 import { IPC_EVENTS } from "../shared/ipc-events";
 import type { Api } from "./index.d";
+import type { GetFbMarketListingsSettings } from "../shared/types";
 
 // Custom APIs for renderer
 const api: Api = {
@@ -18,6 +19,10 @@ const api: Api = {
 
   fbLogOut: () => {
     return ipcRenderer.invoke(IPC_EVENTS.FB_LOG_OUT);
+  },
+
+  getFBMarketListings: (settings: GetFbMarketListingsSettings) => {
+    return ipcRenderer.invoke(IPC_EVENTS.GET_FB_MARKET_LISTINGS, settings);
   }
 };
 

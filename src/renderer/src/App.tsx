@@ -34,6 +34,17 @@ function App() {
     console.log("Logged out");
   }
 
+  async function handleGetMarketListings() {
+    const settings = {
+      numListings: 10,
+      location: "Sydney",
+      minPrice: 100,
+      maxPrice: 500
+    };
+    const listings = await window.api.getFBMarketListings(settings);
+    console.log("Market listings:", listings);
+  }
+
   return (
     <div className="bg-muted flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
       <div className="flex w-full max-w-sm flex-col gap-6">
@@ -42,6 +53,7 @@ function App() {
           <Button onClick={handleLogin}>Log in</Button>
           <Button onClick={handleClick}>Check login status</Button>
           <Button onClick={handleLogout}>Log out</Button>
+          <Button onClick={handleGetMarketListings}>Get Market Listings</Button>
           <Label>{loggedIn ? "Logged in" : "Not logged in"}</Label>
         </a>
       </div>

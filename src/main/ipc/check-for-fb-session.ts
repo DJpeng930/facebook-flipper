@@ -14,7 +14,7 @@ export async function checkForFBSession() {
 
   //Check if logged in by looking for "on your mind" text
   try {
-    await page.waitForSelector('span:has-text("on your mind")', { timeout: 10 });
+    await page.waitForSelector('span:has-text("on your mind")', { timeout: 1000 });
     console.log("[session-checker]:Logged in");
 
     await browser.close();
