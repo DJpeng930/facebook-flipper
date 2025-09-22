@@ -2,6 +2,7 @@ import * as cheerio from "cheerio";
 import { PlaywrightManager } from "../browser/playwright";
 import type { Element } from "domhandler";
 import { FBMarketListing } from "../../../shared/types";
+import type { BrowserContext } from "playwright";
 
 interface GetFbMarketListingsSettings {
   query: string; // Search term to filter listings (previously searchTerm)
@@ -9,6 +10,7 @@ interface GetFbMarketListingsSettings {
   minPrice?: number; // Optional minimum price filter
   maxPrice?: number; // Optional maximum price filter
   daysSinceListed?: number; // Optional days since listed filter
+  location?: string; // Optional location filter
   itemCondition?: "new" | "used_like_new" | "used_good" | "used_fair"; // Optional item condition filter
 }
 
@@ -40,15 +42,25 @@ export class FacebookScraper {
     const listingIds = await this.extractListingIds(settings);
 
     const listings: FBMarketListing[] = [];
+    const batchSize = 10; // Number of listings to process in parallel
 
-    let total = 0;
-    for (const id of listingIds) {
-      console.log(`Extracting data for listing ID: ${id}`);
-      const listingData = await this.extractListingDataFromPage(id);
-      listings.push(listingData);
-      total++;
-      console.log(`Extracted ${total}/${listingIds.length} listings.`);
+    const context = await PlaywrightManager.createFacebookContext();
+
+    for (let i = 0; i < listingIds.length; i += batchSize) {
+      const batch = listingIds.slice(i, i + batchSize);
+
+      console.log(`Processing batch of ${batch.length} listings...`);
+
+      await Promise.all(
+        batch.map(async (id) => {
+          console.log(`Extracting data for listing ID: ${id}`);
+          const listingData = await this.extractListingDataFromPage(id, context);
+          listings.push(listingData);
+          console.log(`Extracted ${listings.length}/${listingIds.length} listings.`);
+        })
+      );
     }
+    await context.close();
 
     return listings;
   }
@@ -64,9 +76,11 @@ export class FacebookScraper {
    * @returns A Promise that resolves to a FBMarketListing object containing the extracted listing data
    * @throws May throw errors if the page cannot be loaded or if elements cannot be found
    */
-  private static async extractListingDataFromPage(id: string): Promise<FBMarketListing> {
-    const context = await PlaywrightManager.createFacebookContext();
-    const page = await context.newPage();
+  private static async extractListingDataFromPage(id: string, context?: BrowserContext): Promise<FBMarketListing> {
+    const isExternalContext = context !== undefined;
+    if (!isExternalContext) context = await PlaywrightManager.createFacebookContext();
+
+    const page = await context!.newPage();
 
     await page.goto(`https://www.facebook.com/marketplace/item/${id}`);
     const content = await page.content();
@@ -110,7 +124,8 @@ export class FacebookScraper {
 
     const exactLocation = dataJson.require[0][3][0].__bbox.require[8][3][0].initialRouteInfo.route.rootView.props.location;
 
-    await context.close();
+    if (!isExternalContext) await context!.close();
+
     return {
       id,
       title: this.cleanText(title),
@@ -186,7 +201,7 @@ export class FacebookScraper {
    * @private
    */
   private static generateSearchUrl(settings: GetFbMarketListingsSettings): string {
-    const baseUrl = "https://www.facebook.com/marketplace/sydney/search?";
+    const baseUrl = `https://www.facebook.com/marketplace/${settings.location || "sydney"}/search?`;
     const params = new URLSearchParams();
 
     if (settings.query) {
