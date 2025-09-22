@@ -2,7 +2,7 @@ import { contextBridge, ipcRenderer } from "electron";
 import { electronAPI } from "@electron-toolkit/preload";
 import { IPC_EVENTS } from "../shared/ipc-events";
 import type { Api } from "./index.d";
-import type { GetFbMarketListingsSettings } from "../shared/types";
+import type { GetFbMarketListingsSettings } from "../main/services/facebook/scraper";
 
 // Custom APIs for renderer
 const api: Api = {

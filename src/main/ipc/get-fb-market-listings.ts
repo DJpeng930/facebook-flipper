@@ -1,8 +1,11 @@
-import { FacebookScraper } from "../services/facebook/scraper";
+import { FBMarketListing } from "../../shared/types";
+import { FacebookScraper, GetFbMarketListingsSettings } from "../services/facebook/scraper";
 
-export async function getFBMarketListings() {
+export async function getFBMarketListings(settings: GetFbMarketListingsSettings): Promise<FBMarketListing[]> {
   console.log("Starting Facebook Marketplace listing extraction...");
-
+  if (settings) {
+    console.log("");
+  }
   // Record start time
   const startTime = performance.now();
 

@@ -4,7 +4,7 @@ import type { Element } from "domhandler";
 import { FBMarketListing } from "../../../shared/types";
 import type { BrowserContext } from "playwright";
 
-interface GetFbMarketListingsSettings {
+export interface GetFbMarketListingsSettings {
   query: string; // Search term to filter listings (previously searchTerm)
   numListings: number; // Number of listings to fetch
   minPrice?: number; // Optional minimum price filter
