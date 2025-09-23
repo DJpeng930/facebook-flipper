@@ -1,28 +1,29 @@
 import { FBMarketListing } from "../../shared/types";
 import { FacebookScraper, GetFbMarketListingsSettings } from "../services/facebook/scraper";
+import { LargeLanguageModel } from "../services/open-ai/llm";
+import fs from "fs";
 
 export async function getFBMarketListings(settings: GetFbMarketListingsSettings): Promise<FBMarketListing[]> {
-  console.log("Starting Facebook Marketplace listing extraction...");
-  if (settings) {
-    console.log("");
-  }
-  // Record start time
-  const startTime = performance.now();
+  //load listings from mock file for testing
+  const listings: FBMarketListing[] = JSON.parse(await fs.promises.readFile(`mocks/listings.json`, "utf-8"));
 
-  const listings = await FacebookScraper.getMarketplaceListings({
-    numListings: 10,
-    query: "bicycle"
-  });
+  console.log("Sending listings to LLM for analysis...");
+  const res = await LargeLanguageModel.analyzeListings(listings);
+  console.log("LLM Response:", res);
 
-  // Calculate execution time in seconds
-  const executionTime = (performance.now() - startTime) / 1000;
-  console.log(`Execution time: ${executionTime.toFixed(2)} seconds`);
+  //save response to file for debugging
+  await fs.promises.writeFile(`mocks/llm-response.json`, JSON.stringify(res, null, 2));
 
-  console.log("Listing Data Extracted:");
-  console.log(listings);
+  // return [];
+  // console.log("Starting Facebook Marketplace listing extraction...");
 
-  //save to file for debugging
-  // await fs.promises.writeFile(`listings.json`, JSON.stringify(listings, null, 2));
+  // const listings = await FacebookScraper.getMarketplaceListings({
+  //   numListings: 10,
+  //   query: "laptop"
+  // });
+
+  //  save to file for debugging
+  // await fs.promises.writeFile(`mocks/listings.json`, JSON.stringify(listings, null, 2));
 
   return listings;
 }

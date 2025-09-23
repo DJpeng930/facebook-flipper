@@ -31,6 +31,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^0.544.0",
+    "openai": "^5.22.1",
     "patchright": "^1.55.2",
     "playwright": "^1.55.0",
     "postcss": "^8.5.6",
