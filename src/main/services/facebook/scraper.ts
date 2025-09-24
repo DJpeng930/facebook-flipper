@@ -1,18 +1,8 @@
 import * as cheerio from "cheerio";
 import { PlaywrightManager } from "../browser/playwright";
 import type { Element } from "domhandler";
-import { FBMarketListing } from "../../../shared/types";
+import { FBMarketListing, SearchFilters } from "../../../shared/types";
 import type { BrowserContext } from "playwright";
-
-export interface GetFbMarketListingsSettings {
-  query: string; // Search term to filter listings (previously searchTerm)
-  numListings: number; // Number of listings to fetch
-  minPrice?: number; // Optional minimum price filter
-  maxPrice?: number; // Optional maximum price filter
-  daysSinceListed?: number; // Optional days since listed filter
-  location?: string; // Optional location filter
-  itemCondition?: "new" | "used_like_new" | "used_good" | "used_fair"; // Optional item condition filter
-}
 
 export class FacebookScraper {
   private static readonly SELECTORS = {
@@ -38,7 +28,7 @@ export class FacebookScraper {
    * @returns A promise that resolves to an array of marketplace listing objects
    * @async
    */
-  public static async getMarketplaceListings(settings: GetFbMarketListingsSettings): Promise<FBMarketListing[]> {
+  public static async getMarketplaceListings(settings: SearchFilters): Promise<FBMarketListing[]> {
     const listingIds = await this.extractListingIds(settings);
 
     const listings: FBMarketListing[] = [];
@@ -153,7 +143,7 @@ export class FacebookScraper {
    * @returns A promise that resolves to an array of unique listing ID strings
    * @throws May throw errors if browser automation fails or if the page structure changes
    */
-  private static async extractListingIds(settings: GetFbMarketListingsSettings): Promise<string[]> {
+  private static async extractListingIds(settings: SearchFilters): Promise<string[]> {
     const context = await PlaywrightManager.createFacebookContext();
     const page = await context.newPage();
     await page.goto(this.generateSearchUrl(settings));
@@ -200,7 +190,7 @@ export class FacebookScraper {
    * @returns A fully formatted Facebook Marketplace search URL with query parameters.
    * @private
    */
-  private static generateSearchUrl(settings: GetFbMarketListingsSettings): string {
+  private static generateSearchUrl(settings: SearchFilters): string {
     const baseUrl = `https://www.facebook.com/marketplace/${settings.location || "sydney"}/search?`;
     const params = new URLSearchParams();
 

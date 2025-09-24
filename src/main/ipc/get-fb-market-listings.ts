@@ -1,9 +1,10 @@
 import { FBMarketListing } from "../../shared/types";
-import { FacebookScraper, GetFbMarketListingsSettings } from "../services/facebook/scraper";
+import { FacebookScraper } from "../services/facebook/scraper";
+import { SearchFilters } from "../../shared/types";
 import { LargeLanguageModel } from "../services/open-ai/llm";
 import fs from "fs";
 
-export async function getFBMarketListings(settings: GetFbMarketListingsSettings): Promise<FBMarketListing[]> {
+export async function getFBMarketListings(settings: SearchFilters): Promise<FBMarketListing[]> {
   //load listings from mock file for testing
   const listings: FBMarketListing[] = JSON.parse(await fs.promises.readFile(`mocks/listings.json`, "utf-8"));
 
