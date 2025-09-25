@@ -1,162 +1,342 @@
 [
   {
-    "id": "1432210794669071",
-    "title": "Gaming Laptop RTX4060 AMD R7 8845H  32GB DDR5 5600MHz 1TB",
-    "description": "Bought a few months ago, still looks like brand new. Powerful yet portable - ideal for gamers, content creators, and professionals.\n\n⚙️ Specifications:\n • CPU: AMD Ryzen 7 8845H (8 cores)\n • RAM: 32GB DDR5 5600MHz (16GB x 2)\n • GPU: NVIDIA GeForce RTX 4060 Laptop GPU (8GB)\n • Display: 15.6\" 2.5K+ (2560×1600) 240Hz high refresh rate\n • Storage: 1TB NVMe SSD (Kingston)\n • Battery Health: 100%\n • OS: Windows 11 Pro 64-bit",
-    "age": "Unknown",
-    "curreny": "AU$",
-    "price": 1500,
-    "location": "Sydney, NSW",
-    "exactLocation": {
-      "radius": 2,
+    "id": "1148804296664904",
+    "title": "Samsung 75' QLED Smart TV",
+    "description": "Samsung 75\"  QLED 4K HDR Smart TV.\nIn perfect condition and working in excellently .\nCrystal UHD Dis... See more",
+    "ageString": "Unknown",
+    "currency": "Unknown",
+    "price": 0,
+    "imageUrl": "https://scontent.fcbr1-1.fna.fbcdn.net/v/t45.5328-4/548653845_2024052758421158_434738958876865445_n.jpg?_nc_cat=103&ccb=1-7&_nc_sid=247b10&_nc_ohc=-XagaDTaPnIQ7kNvwFibBeQ&_nc_oc=AdngUz57tt8dsuDI6UWQQobZuQXics4m45L6XfiCoP4_0YE9EEdEQYN_VnN7tgBs7Bo&_nc_zt=23&_nc_ht=scontent.fcbr1-1.fna&_nc_gid=hBZ1bL-F4QZkeXYNywygDw&oh=00_AfZmB1ZwUHgWCJJ6JI5pKbbpmVEe8vrIYoJR-UU-xeu1Lw&oe=68DAAFF3",
+    "location": {
+      "name": "Property for sale",
       "latitude": -33.868103027344,
       "longitude": 151.21032714844,
-      "vanityPageId": "sydney"
+      "radius": 2
     },
-    "photo": "https://scontent.fcbr1-1.fna.fbcdn.net/v/t45.5328-4/544050088_1471796740538704_247804600837056593_n.jpg?stp=dst-jpg_p720x720_tt6&_nc_cat=104&ccb=1-7&_nc_sid=247b10&_nc_ohc=-ZfBHSL7aGgQ7kNvwFfGJrY&_nc_oc=Admltm8CSWrb-IGSqs89XG2X_eQgOROla6r5KMuc5ADLjK5nmE23bT9xLFLvBJPV5I0&_nc_zt=23&_nc_ht=scontent.fcbr1-1.fna&_nc_gid=GjT2nv1mY184JdNoS7IWqg&oh=00_AfbHAVR6wbcrg4BFwzySju0YW9fkxyW1WO7ruFx08nSO-g&oe=68D8207E"
+    "age": 0,
+    "status": "pending"
   },
   {
-    "id": "1940483776522728",
-    "title": "Dell pentium laptop with charger",
-    "description": "Dell latitude 2in1 Pentium with touch screen.\n4gb ram.\n128ssd gb\nCharger included \nTouch screen\nWindows 11\nModel 3190\n11.6 inch screen\nGreat battery life \n\nIn top condition.\nIt's selling cheaper than retail it's going at a bargain price.\n\nMessage me for more details. I can also mail it off. Pick up is in Glebe otherwise.",
-    "age": "Unknown",
-    "curreny": "AU$",
-    "price": 150,
-    "location": "Sydney, NSW",
-    "exactLocation": {
-      "radius": 2,
-      "latitude": -33.868103027344,
-      "longitude": 151.21032714844,
-      "vanityPageId": "sydney"
-    },
-    "photo": "NA"
-  },
-  {
-    "id": "799773462538787",
-    "title": "HP Chromebook plus laptop",
-    "description": "Purchased for $469 in late April \nTRY BEFORE YOU BUY\nStill brand new working perfect \nGood condition \nComes with warranty \nReason for selling due to upgrade\nPick up or drop off at extra",
-    "age": "Unknown",
-    "curreny": "AU$",
-    "price": 320,
-    "location": "Sydney, NSW",
-    "exactLocation": {
-      "radius": 2,
-      "latitude": -33.868103027344,
-      "longitude": 151.21032714844,
-      "vanityPageId": "sydney"
-    },
-    "photo": "NA"
-  },
-  {
-    "id": "1768512920692616",
-    "title": "HP Pavilion Laptop 15\" 10th Gen Intel & NVIDIA dGPU",
-    "description": "Is it available/offers/trades ignored.\n\nIn excellent original condition, all specs and information please refer to photos.\n\nExcellent battery health (see photos)\nLight weight 1.65kg\nIntel i5 1035g1\nNvidia mx130\n15.6\" 1920*1080\n8/256\nB&O sound\nGenuine activated Windows 11\n\nLate 2021 model\n\nPick up only, in Greystanes.",
-    "age": "Unknown",
-    "curreny": "AU$",
-    "price": 299,
-    "location": "Sydney, NSW",
-    "exactLocation": {
-      "radius": 2,
-      "latitude": -33.868103027344,
-      "longitude": 151.21032714844,
-      "vanityPageId": "sydney"
-    },
-    "photo": "NA"
-  },
-  {
-    "id": "1496037238250908",
-    "title": "Acer Nitro 5 - Gaming Laptop - 16GB - RTX 4060 - 144HZ",
-    "description": "Acer Nitro 5 - Gaming Laptop - RTX 4060 - 144HZ\n\nExcellent Condition - As New\n\n- Windows 11\n- NVIDIA RTX 4060 8GB GDDR6\n- Intel - i5-12450H\n- 16GB RAM\n- 512GB NVME SSD\n- 144Hz Display\n\nIf the ad is up then it's still available.\n\nCash or PayID (Must wait for funds to clear)\n\nNewtown or Malabar collection.",
-    "age": "3 days ago",
-    "curreny": "AU$",
-    "price": 950,
-    "location": "Sydney, NSW",
-    "exactLocation": {
-      "radius": 2,
-      "latitude": -33.868103027344,
-      "longitude": 151.21032714844,
-      "vanityPageId": "sydney"
-    },
-    "photo": "NA"
-  },
-  {
-    "id": "2336561523426606",
-    "title": "HP Pavilion Laptop",
-    "description": "UK plug, have the AUS converter plug. Still like new hardly used, fresh format.\nPick up in city",
-    "age": "3 days ago",
-    "curreny": "AU$",
-    "price": 200,
-    "location": "Sydney, NSW",
-    "exactLocation": {
-      "radius": 2,
-      "latitude": -33.868103027344,
-      "longitude": 151.21032714844,
-      "vanityPageId": "sydney"
-    },
-    "photo": "NA"
-  },
-  {
-    "id": "1489723655395447",
-    "title": "Hp 2 in 1 touch screen laptop with charger",
-    "description": "2 in 1 pentium\n\n4gb ram\n128g ssd\nTouch screen \n11inch\nCharger\nWindows 11\n2019 model\n\nTop laptop \nIs great for work, the net, music, etc internet is fast and so is the laptop in general . Selling it at a bargain price. You can flip the screen and use it as a tablet. \n\nSelling cheap \n\nI have multiple units!\n\nPick up is in Glebe, I can mail it which I've done many times (see pictures) or I might be able to deliver for a small fee.",
-    "age": "Unknown",
-    "curreny": "AU$",
-    "price": 135,
-    "location": "Sydney, NSW",
-    "exactLocation": {
-      "radius": 2,
-      "latitude": -33.868103027344,
-      "longitude": 151.21032714844,
-      "vanityPageId": "sydney"
-    },
-    "photo": "NA"
-  },
-  {
-    "id": "1061317659205182",
-    "title": "Dell Laptop.",
-    "description": "No issues in very good condition.\nArea : Roselands",
-    "age": "a week ago",
-    "curreny": "AU$",
+    "id": "1845113006351877",
+    "title": "SAMSUNG SMART TV 75 INCHES",
+    "description": "Selling SAMSUNG SMART TV 75 INCHES\n\nI'm moving to a new city. It's barely used for 8 months but still like new and doesn't have any dents,scratch or cracks it's working perfectly with no issue, No problem issue with a guarantee It's an amazing TVs still with warranty\n\nIt's comes with its original remote, TV stand base and TV stand neck\n\nAlso comes with its box\nHolding at $50\nOffer delivery with some extra charges and realistic distance.",
+    "ageString": "Unknown",
+    "currency": "AU$",
     "price": 250,
-    "location": "Sydney, NSW",
-    "exactLocation": {
-      "radius": 2,
+    "imageUrl": "https://scontent.fcbr1-1.fna.fbcdn.net/v/t45.5328-4/547947934_663495652984581_7104390790091876556_n.jpg?_nc_cat=108&ccb=1-7&_nc_sid=247b10&_nc_ohc=yJZwTdI1dYUQ7kNvwEg8UPV&_nc_oc=AdnSo5tA0sS_NS13p2K767NRUiILWUSpH_5E35t_A4QBKSOT-Qalqi-6y3Z9m8mTLuM&_nc_zt=23&_nc_ht=scontent.fcbr1-1.fna&_nc_gid=9Edj8POgX3V4gMmxFQZVig&oh=00_AfbsPs_3ab2ny7AGjvdSluKe5_CCYSojwd1QjozGnzZ4nQ&oe=68DACCC6",
+    "location": {
+      "name": "Sydney, NSW",
       "latitude": -33.868103027344,
       "longitude": 151.21032714844,
-      "vanityPageId": "sydney"
+      "radius": 2
     },
-    "photo": "NA"
+    "age": 0,
+    "status": "pending"
   },
   {
-    "id": "1871792400432561",
-    "title": "Surface Laptop 3",
-    "description": "Microsoft Surface laptop 3\n Intel®Core™i5*128G SSD*8G*Touch*WINDOWS 11P*Pristine\n\nSurface laptop 13.5\"LED\nIntel®Core™i5\n128 GB SSD\n8 GB DDR4 2600Hz\nWINDOWS 11Pro\nSuper Fast/USB 3.0\nFull Touch Screen 2k display\nWindows 11 Pro 64Bit\nBluetooth\n1080p Camera\nIncluded genuine charger \nPickup at parramatta",
-    "age": "a week ago",
-    "curreny": "AU$",
-    "price": 350,
-    "location": "Sydney, NSW",
-    "exactLocation": {
-      "radius": 2,
+    "id": "811909268067462",
+    "title": "75 inch Samsung smart tv",
+    "description": "Good condition, everything works fine. Comes with remote. Perfect for movies, shows, or gaming.",
+    "ageString": "Unknown",
+    "currency": "AU$",
+    "price": 200,
+    "imageUrl": "https://scontent.fcbr1-1.fna.fbcdn.net/v/t45.5328-4/550996679_1325474202632557_4683677814208612531_n.jpg?_nc_cat=106&ccb=1-7&_nc_sid=247b10&_nc_ohc=mVEDtP7IheQQ7kNvwGpRftU&_nc_oc=Admsdjp9Pb3RA-V-k2weHl9jy9yM0O4e3aWmNCnQXLgFujFo-w7TgbZwR2wTu6tgTc0&_nc_zt=23&_nc_ht=scontent.fcbr1-1.fna&_nc_gid=vhn24NGI6G50c1Hw01mdVg&oh=00_AfZ8Q1XvaEaU7t-V_T-rIBMPH16zRi3D7ks8t5RZTzxbFA&oe=68DAE516",
+    "location": {
+      "name": "Sydney, NSW",
       "latitude": -33.868103027344,
       "longitude": 151.21032714844,
-      "vanityPageId": "sydney"
+      "radius": 2
     },
-    "photo": "NA"
+    "age": 0,
+    "status": "pending"
   },
   {
-    "id": "24500721656246712",
-    "title": "Touch screen hp laptop with charger",
-    "description": "2 in 1 pentium\n\n4gb ram\n128g ssd\nTouch screen \n11inch\nCharger\nWindows 11\n2019 model\n\nTop laptop \nIs great for work, the net, music, etc internet is fast and so is the laptop in general . Selling it at a bargain price. You can flip the screen and use it as a tablet. \n\nSelling cheap \n\nI have multiple units!\n\nPick up is in Glebe, I can mail it which I've done many times (see pictures) or I might be able to deliver for a small fee.",
-    "age": "Unknown",
-    "curreny": "AU$",
-    "price": 128,
-    "location": "Sydney, NSW",
-    "exactLocation": {
-      "radius": 2,
+    "id": "678517235282131",
+    "title": "OLED 55 Inch TV and wall bracket",
+    "description": "OLED55C8PTA OLED TV & Wall Bracket (Wall Bracket is valued at $400 and only two years old).",
+    "ageString": "2d4d21 hours ago",
+    "currency": "AU$",
+    "price": 1000,
+    "imageUrl": "https://scontent.fcbr1-1.fna.fbcdn.net/v/t45.5328-4/551141877_780369947964833_4072296420783573984_n.jpg?stp=dst-jpg_p720x720_tt6&_nc_cat=111&ccb=1-7&_nc_sid=247b10&_nc_ohc=uol7BSuUfuYQ7kNvwGkZc2h&_nc_oc=AdnaTLleVaLO-6Uo6b9NUY42HgO6ESqgeQK1NkKPg6OqwXqyw6Vu1OUkzpOoA0oz_qY&_nc_zt=23&_nc_ht=scontent.fcbr1-1.fna&_nc_gid=bgmzLasew6taW-jkR_R4qg&oh=00_AfaHi5kkMs8EJ0I_WDFyDywhR4bAtXufZP3WwMjoYEQOVA&oe=68DAD094",
+    "location": {
+      "name": "2d",
       "latitude": -33.868103027344,
       "longitude": 151.21032714844,
-      "vanityPageId": "sydney"
+      "radius": 2
     },
-    "photo": "NA"
+    "age": 0,
+    "status": "pending"
+  },
+  {
+    "id": "1487808669025758",
+    "title": "Samsung 65\" 4K Full HD QLED Smart Tv.",
+    "description": "In excellent condition and working perfectly \nNo damages or any issues \nComes with all the accessories, i.e., the box and a remote.\nDelivery Available At A Fee!",
+    "ageString": "a day ago",
+    "currency": "AU$",
+    "price": 100,
+    "imageUrl": "https://scontent.fcbr1-1.fna.fbcdn.net/v/t45.5328-4/551603602_775672008596595_9033290867160580372_n.jpg?_nc_cat=106&ccb=1-7&_nc_sid=247b10&_nc_ohc=_xKXRGvWeZsQ7kNvwF_xDbO&_nc_oc=Adm8yKhIwlvz9lLIyEhDEvSUazrLEXT9dWlaEarQbdlReQ2TmKdFeHSOFF-nYlLk8so&_nc_zt=23&_nc_ht=scontent.fcbr1-1.fna&_nc_gid=vCpkQg6iOVCKTVj1mX0Msw&oh=00_Afbz6rYuEO_NFkD5gonXZQKNfIVU9gU5nCLVLJBrOdA6yQ&oe=68DAC847",
+    "location": {
+      "name": "Sydney, NSW",
+      "latitude": -33.868103027344,
+      "longitude": 151.21032714844,
+      "radius": 2
+    },
+    "age": 0,
+    "status": "pending"
+  },
+  {
+    "id": "823084276926221",
+    "title": "LG 75\" 4K Smart TV (MODEL 75SK8000PTA) Excellent Condition, Clean Look, Bargain Price",
+    "description": "Selling our 75 inch 4k smart tv, been a beautiful tv but we moving into a smaller apartment and can't bring this with unfortunately\n\nWe've had it for a couple years now and we've had no issues with it the entire time \n\nWhat's included:\n✅LG stand \n✅Remote and power cable\n✅1 Month warranty\n\nHas all the popular apps like Netflix, kayo, Disney, Stan, paramount, YouTube, Foxtel, binge etc.\n\nCan also deliver",
+    "ageString": "Unknown",
+    "currency": "AU$",
+    "price": 150,
+    "imageUrl": "https://scontent.fcbr1-1.fna.fbcdn.net/v/t45.5328-4/552350839_2206679056479481_2774466015668972571_n.jpg?stp=dst-jpg_s960x960_tt6&_nc_cat=102&ccb=1-7&_nc_sid=247b10&_nc_ohc=fOUn6d2AUv8Q7kNvwHbTVVZ&_nc_oc=Adlf3GAciTWH2srl7WhH2y7bSN0J_WIC9Gg5wJ43tZ4gt8c3NJg5OcF2iAAMYGGBPPo&_nc_zt=23&_nc_ht=scontent.fcbr1-1.fna&_nc_gid=3mb21V9IjO0fbrApzzgjkA&oh=00_AfamE393OmkLwlngwkWvpMGF_8yRJd8YUupJvregInRxfg&oe=68DABF00",
+    "location": {
+      "name": "Sydney, NSW",
+      "latitude": -33.868103027344,
+      "longitude": 151.21032714844,
+      "radius": 2
+    },
+    "age": 0,
+    "status": "pending"
+  },
+  {
+    "id": "1161816899172872",
+    "title": "LG OLED 4K TV 55 Inch",
+    "description": "",
+    "ageString": "Unknown",
+    "currency": "AU$",
+    "price": 600,
+    "imageUrl": "https://scontent.fcbr1-1.fna.fbcdn.net/v/t45.5328-4/552651094_1295616474976545_834562078461201214_n.jpg?_nc_cat=103&ccb=1-7&_nc_sid=247b10&_nc_ohc=D3How09Cr9UQ7kNvwHWzO_-&_nc_oc=AdlRA6FmiYXqPgDZ05fBIJRPi8lpXD9-Mi7LvDxYo1PNVyDgI4K_sP0F50x8kW4MjZ0&_nc_zt=23&_nc_ht=scontent.fcbr1-1.fna&_nc_gid=-sEhLV-AGMZmY3K3o_Kzyg&oh=00_AfYeyz-sXLeu7g0qYAt2TU3_o9t5a6_QHxrRFsjq6dNxtA&oe=68DAE62F",
+    "location": {
+      "name": "Sydney, NSW",
+      "latitude": -33.868103027344,
+      "longitude": 151.21032714844,
+      "radius": 2
+    },
+    "age": 0,
+    "status": "pending"
+  },
+  {
+    "id": "1940842983379352",
+    "title": "Moving out sale",
+    "description": "MOVING SALE!!!!\nwe are relocating this 30th and we would like to dispose everything in our house MUST GO ASAP\nplease pm me for serious inquiries,\ncan deliver for short distances.\nIf the post is up everything in the post is available will not reply to \nSo common 'is this available '\nPrices slightly negotiable \nThankyou\nSamsung smart tv 75' $300\nDining set $180\nCamera $1800\nTrailer $2200\nPram $2000\nSpa $1400\nPs5 $400\nQuad 2300\nE.Bike $800\nKitchen aid $200\nPool table $400\nLounge $400\nSwift Ace caravan $27,500\nVanity desk $280\nTrailer $3200\nKing sized bed $300\nLeather couch $300\nTool trolley with tools $450\nBBQ $350\nLawnmower $800\nFridge $450\nWashing machine $450\nDryer $300\nYaris $4,800",
+    "ageString": "Unknown",
+    "currency": "AU$",
+    "price": 1,
+    "imageUrl": "https://scontent.fcbr1-1.fna.fbcdn.net/v/t45.5328-4/550445353_1924551318111358_3120971721844434636_n.jpg?_nc_cat=111&ccb=1-7&_nc_sid=247b10&_nc_ohc=AXPldLb8WpwQ7kNvwFh9fOP&_nc_oc=AdkRgfWAz9EnWxCnwiV-WFJUZS7MhwqPZ2OSIyBML-5NuGeR496yQE1X9I-Jn50Ch9k&_nc_zt=23&_nc_ht=scontent.fcbr1-1.fna&_nc_gid=K83u2Rgq_JddnzNzKC_OGg&oh=00_AfYx4R3vr04so2-l-eOXe_9Jgl5RtbEifKXJZyYhpUakPQ&oe=68DACE17",
+    "location": {
+      "name": "Sydney, NSW",
+      "latitude": -33.868103027344,
+      "longitude": 151.21032714844,
+      "radius": 2
+    },
+    "age": 0,
+    "status": "pending"
+  },
+  {
+    "id": "1827400924800039",
+    "title": "Samsung 49\" TV",
+    "description": "Samsung 49-inch TV for sale. The screen is cracked/damaged (see photos), so it's being sold for parts or repair only.\nOther functions and parts (stand, ports, remote, etc.) are in good condition.",
+    "ageString": "Unknown",
+    "currency": "AU$",
+    "price": 65,
+    "imageUrl": "https://scontent.fcbr1-1.fna.fbcdn.net/v/t45.5328-4/553484710_763144949848440_5667754943799453779_n.jpg?stp=dst-jpg_p720x720_tt6&_nc_cat=100&ccb=1-7&_nc_sid=247b10&_nc_ohc=_7L9u46PhUkQ7kNvwE5prpf&_nc_oc=Adm0UuvNjfdsOJd1L3xjDm1BDeFictkiYIeYAz3b8fQu2foyI6cl6cNNR4rxFMSQIYg&_nc_zt=23&_nc_ht=scontent.fcbr1-1.fna&_nc_gid=Ncac2UK4VZVzcVLskdZs4A&oh=00_AfZek6-nVz4I3eNfS3RjM50AVKy0PCrG79znKbidxBcX0Q&oe=68DAD1CC",
+    "location": {
+      "name": "Sydney, NSW",
+      "latitude": -33.868103027344,
+      "longitude": 151.21032714844,
+      "radius": 2
+    },
+    "age": 0,
+    "status": "pending"
+  },
+  {
+    "id": "1691605074818796",
+    "title": "Samsung 65\" QLED Smart TV (QA65Q70CAWXXY) - in excellent condition",
+    "description": "Selling Samsung 65\" QLED Smart TV (QA65Q70CAWXXY) - in excellent condition with no faults. 4K QLED display True Dolby Atmos sound 120Hz motion rate - perfect for movies, gaming & sports Smart TV with all major apps: Netflix, Disney+, YouTube, etc. Slim & sleek design Includes remote, power cable, and original stand. Only selling as I'm moving and no longer need it. Also selling matching Samsung Q600C Soundbar, open to bundling both for a deal!",
+    "ageString": "2d4d",
+    "currency": "AU$",
+    "price": 250,
+    "imageUrl": "https://scontent.fcbr1-1.fna.fbcdn.net/v/t45.5328-4/533100598_3928777664040604_4606564779418357841_n.jpg?_nc_cat=108&ccb=1-7&_nc_sid=247b10&_nc_ohc=IZwkii3vSPoQ7kNvwEafwi-&_nc_oc=Adk1c5_2rSGqUsgYzzt6ook0vbVnwrgR3VayQKE9vlflt2eJfPrIr4Hn-68LEJ2Xaiw&_nc_zt=23&_nc_ht=scontent.fcbr1-1.fna&_nc_gid=afrSzoJWNncQj9nGptisMg&oh=00_Afas5J9X7fptWujF1KngJWDemna1REmUkdIshjiVXA4ZPQ&oe=68DABC2A",
+    "location": {
+      "name": "2d",
+      "latitude": -33.868103027344,
+      "longitude": 151.21032714844,
+      "radius": 2
+    },
+    "age": 0,
+    "status": "pending"
+  },
+  {
+    "id": "1328897475501520",
+    "title": "Handyman service",
+    "description": "All general maintenance!\n\nMinor plumbing \n\nMinor electricity \n\nDoors replacement \n\nDoors lock replacement \n\nFurniture assembly service . All kind of furniture ( beds , couches, wardrobes, bed sides , tv units, and much more )\n\nStoves and ovens repair ( gas $ electric)\n\n\nWashing machines repair ( front load & top load )",
+    "ageString": "2d4d",
+    "currency": "AU$",
+    "price": 2,
+    "imageUrl": "https://scontent.fcbr1-1.fna.fbcdn.net/v/t45.5328-4/551503590_1465495058110049_1792042685951704092_n.jpg?_nc_cat=111&ccb=1-7&_nc_sid=247b10&_nc_ohc=bze_2ZYYDyAQ7kNvwEOAKCc&_nc_oc=Adm_ynaMn2a9sXZ8aqRqo_mCHZS3kxNrwe7NPipnPS41I6G7AUxLar6TqKooURZMkCs&_nc_zt=23&_nc_ht=scontent.fcbr1-1.fna&_nc_gid=U_eUfnxvEBMURTfnhm4irg&oh=00_AfbndW76SqDWJB1E9fvHDJhaZ_uiGTu24sCFCvf3mrXqqQ&oe=68DAB19E",
+    "location": {
+      "name": "2d",
+      "latitude": -33.868103027344,
+      "longitude": 151.21032714844,
+      "radius": 2
+    },
+    "age": 0,
+    "status": "pending"
+  },
+  {
+    "id": "2041143616712550",
+    "title": "SONY Bravia LCD 52 inch TV",
+    "description": "Sony Bravia LCD Digital Colour TV. MODEL 52Z4500\nTV System\nDigital, Analog: B/G, D/K, I\n\nTO BE COLLECTED FROM LIVERPOOL,NSW,2170\n\nOld Used TV - The specs are from the online manual -\n\nThe KDL-52Z4500 is a 52-inch, Full HD 1080p LCD television from Sony's BRAVIA range, known for features like BRAVIA Engine™ 2 and Live Colour Creation™, with support for DLNA media streaming and connectivity options including HDMI and USB. It was released in the late 2000s and is no longer a current model, though support and specifications can be found on the Sony Australia support site.\nKey Features\nDisplay:\n52-inch (132cm) LCD screen with 1920 x 1080 resolution.\nPicture Quality:\nFeatures BRAVIA Engine™ 2 for video processing and Intelligent Picture technology with Live Colour Creation™.\nConnectivity:\nIncludes HDMI, Component, USB 2.0, and Ethernet ports.\nSmart Features:\nSupports BRAVIA Sync for seamless control of connected devices and DLNA for photo and music streaming.\nAudio:\nIntegrated stereo speakers with a woofer, offering features like Voice Zoom and various surround sound modes.\nOther:\nEquipped with an ambient light sensor and Picture Frame Mode for displaying photos.\n\nModel\nLCD Screen Size\n52\" (132cm), 16:9\n\nTV System\nDigital, Analog: B/G, D/K, I\n\nVideo Signal\n480i, 576i, 480p, 576p, 720p, 1080i, 1080/24p (HDMI™), 1080p (HDMI™/Component)\n\nColour System\nNTSC 3.58 (AV only), NTSC 4.43 (AV only), PAL, PAL60 (AV only), SECAM\n\nPicture\nViewing Angle\n178°\n\nDisplay Resolution\n1920 x 1080\n\nTheatre Mode\nYes\n\nVideo Processing\nBRAVIA Engine™ 2\n\nIntelligent Picture\nYes\n\nLive Colour Creation™\nYes\n\nScreen Format\nFull / Normal / Wide Zoom / Zoom / 14:9\n\n24P True Cinema™\nYes\n\nPicture Mode\nVivid / Standard / Cinema\n\nBacklight Module\nWCG-CCFL\n\nMotionflow™\nMotionflow™ 200Hz\n\nPanel Bit\n10-bit Panel\n\nx.v.Colour\nYes\n\nPhotoTV HD\nYes\n\nMPEG Noise Reduction\nYes\n\nAudio\nVoice Zoom\nYes\n\nStereo System\nNICAM, A2\n\nSurround Mode\nLive Sports / Music Hall / Cinema / Custom / Simulated Stereo / Off\n\nAudio Output Power\n9W + 9W, 12W (Woofer)\n\nSound Mode\nDynamic / Standard / Clear Voice\n\nSurround\nS-Force Front Surround\n\nTerminals\nComposite Monitor Out / Audio Out\n1 (Rear)\n\nAudio Out\nFixed/Variable\n\nHeadphone Out\n1 (Side)\n\nUSB 2.0\n1 (Side)\n\nEthernet Connection\n1 (Rear)\n\nComponent / Audio In\n2 (Rear)\n\nDigital Media Port\n1 (Rear)\n\nComposite / Audio In\n3 (1 Side/2 Rear)\n\nHDMI™ / Audio In\n3 (1 Side/2 Rear)\n\nHD15 PC Input / Audio\n1 (Rear)\n\nOther Features\nBRAVIA Sync\nYes\n\nDLNA\nPhoto, Music\n\nAmbient Light Sensor™\nYes\n\nSwivel / Tilt\nYes / -\n\nSleep Timer\nYes\n\nPicture Frame Mode\nYes\n\nOn/Off Timer (with Time Setting)\nYes (On-timer only)\n\nOSD Language\nEnglish\n\nClock\nYes\n\nTV Guide On Screen\nYes\n\nPIP (Picture In Picture)\nPC Input / TV Channel\n\nParental Control\nYes (Digital)\n\nPAP (Picture And Picture)\nYes\n\nXMB™\nYes\n\nGeneral\nDimensions (W x H x D) with Stand\n1281 x 882 x 346 mm\n\nWeight with Stand\n43.5kg\n\nStandby Power Consumption\nLess than 0.2W (Normal Standby)\n\nPower Requirements\n220-240V 50Hz\n\nPower Consumption\n320W (Home Mode)\n\nDimensions (W x H x D) without Stand\n1281 x 839 x 135 mm\n\nWeight without Stand\n36.5kg\nADVERTISEMENT",
+    "ageString": "3 hours ago",
+    "currency": "AU$",
+    "price": 100,
+    "imageUrl": "https://scontent.fcbr1-1.fna.fbcdn.net/v/t45.5328-4/552353205_737818695905330_7379613112522314126_n.jpg?stp=dst-jpg_s960x960_tt6&_nc_cat=111&ccb=1-7&_nc_sid=247b10&_nc_ohc=3LFtBwbLuXkQ7kNvwE1TIeC&_nc_oc=Adm0AjugLVIkqRrgScQaHI3HVuI_PSuqRcuIIrAPoHm4lPkBinVkAUU-OC_iLRHf_1U&_nc_zt=23&_nc_ht=scontent.fcbr1-1.fna&_nc_gid=aHMh9G44XLXFg9jBM9kK0g&oh=00_AfbiBronpVIqMeKQVkvMHco3pLronsrbOA8Slu6LD7TJfw&oe=68DAB069",
+    "location": {
+      "name": "Sydney, NSW",
+      "latitude": -33.868103027344,
+      "longitude": 151.21032714844,
+      "radius": 2
+    },
+    "age": 0,
+    "status": "pending"
+  },
+  {
+    "id": "1303846818146770",
+    "title": "Tv unit - free delivery",
+    "description": "I'm selling because I've purchased a larger one and no longer need this one. \n\nFree delivery available for CBD, Eastern Suburb, St George area, and Sutherland Shire\n\nDimensions:\nLength: 120cm\nWidth: 40cm\nHeight: 43cm",
+    "ageString": "2d4d21 hours ago",
+    "currency": "AU$",
+    "price": 150,
+    "imageUrl": "https://scontent.fcbr1-1.fna.fbcdn.net/v/t45.5328-4/551793818_764831773034313_2729522217806521759_n.jpg?stp=dst-jpg_p720x720_tt6&_nc_cat=104&ccb=1-7&_nc_sid=247b10&_nc_ohc=ez7-xUH5Pa8Q7kNvwGqHqs5&_nc_oc=AdlHrIk7c0pryx69jw_8uOwmKtYDdonYPWRdmIP6_st4JCYsasnIk4DHDaPRmVhvFbs&_nc_zt=23&_nc_ht=scontent.fcbr1-1.fna&_nc_gid=JMPNgTnc2qneTeVqtXy-tw&oh=00_Afa09aEkfaqx1C1cAXqtzRHCpkFv8pHNniY8Gy8gbZzdNw&oe=68DABB3F",
+    "location": {
+      "name": "2d",
+      "latitude": -33.868103027344,
+      "longitude": 151.21032714844,
+      "radius": 2
+    },
+    "age": 0,
+    "status": "pending"
+  },
+  {
+    "id": "3475493409274462",
+    "title": "Free TV and set top box on stand.",
+    "description": "Free TV and set top box with stand. Good for bedroom or kids room.\n\nPick up only - Springwood NSW.",
+    "ageString": "Unknown",
+    "currency": "AU$",
+    "price": 0,
+    "imageUrl": "https://scontent.fcbr1-1.fna.fbcdn.net/v/t45.5328-4/551976441_874388565268667_2556176869726344421_n.jpg?stp=dst-jpg_s960x960_tt6&_nc_cat=106&ccb=1-7&_nc_sid=247b10&_nc_ohc=qHzusKjHLlYQ7kNvwG7B_6h&_nc_oc=Adn04_58o5U5zKfzpdxbl0qr06QuJJupX2QIeb6yPCeHV7SAwhANj669_Ek5NgDST9o&_nc_zt=23&_nc_ht=scontent.fcbr1-1.fna&_nc_gid=gH_mMtgMNaExLbbNv1gu-Q&oh=00_AfYgCdEPo3FGRULQxBJ1_sEB8KdHeb_YTZ4TmuO07a9iYA&oe=68DADD33",
+    "location": {
+      "name": "Sydney, NSW",
+      "latitude": -33.868103027344,
+      "longitude": 151.21032714844,
+      "radius": 2
+    },
+    "age": 0,
+    "status": "pending"
+  },
+  {
+    "id": "842787698286556",
+    "title": "IKEA tv unit black brown / gloss black doors",
+    "description": "Please see photos for description, measurements of items. Pick up / cash payment only.",
+    "ageString": "about an hour ago",
+    "currency": "AU$",
+    "price": 160,
+    "imageUrl": "https://scontent.fcbr1-1.fna.fbcdn.net/v/t45.5328-4/552372659_1438577278271174_1945565366614121657_n.jpg?stp=dst-jpg_p720x720_tt6&_nc_cat=100&ccb=1-7&_nc_sid=247b10&_nc_ohc=bdxuM_AaspUQ7kNvwGVqt6j&_nc_oc=Adknb-ifiir3lkZ1ig0-PAdw5ixS8y1AEwwYs7UqOpETWVKoDpIKCt81dKTI94Xukh0&_nc_zt=23&_nc_ht=scontent.fcbr1-1.fna&_nc_gid=6gxGpedXwED1P5xB91XCJQ&oh=00_Afb0oNSXlEXnpr2kansKUX91fQmfpHx5WLltxPC31pHmjQ&oe=68DAC732",
+    "location": {
+      "name": "Sydney, NSW",
+      "latitude": -33.868103027344,
+      "longitude": 151.21032714844,
+      "radius": 2
+    },
+    "age": 0,
+    "status": "pending"
+  },
+  {
+    "id": "1132944441596241",
+    "title": "Twin Samsung tv speakers for sale",
+    "description": "Located in austral",
+    "ageString": "a day ago",
+    "currency": "AU$",
+    "price": 100,
+    "imageUrl": "https://scontent.fcbr1-1.fna.fbcdn.net/v/t45.5328-4/551420048_24251781984493022_4063230650048567963_n.jpg?stp=dst-jpg_p720x720_tt6&_nc_cat=104&ccb=1-7&_nc_sid=247b10&_nc_ohc=m97EXHJgDyUQ7kNvwExHuzv&_nc_oc=AdlQP7_HUYUS-JN8lN7FvWZGhicgVgHTgm053hy75tEBmLMl8-783-vEiildp0P4JR0&_nc_zt=23&_nc_ht=scontent.fcbr1-1.fna&_nc_gid=tHnpoG4asREsaXknuroIYQ&oh=00_AfYnxyJZetcoQS9POcqC1etubI3dc5ziOeriE7bnN0C3Wg&oe=68DADFEE",
+    "location": {
+      "name": "Sydney, NSW",
+      "latitude": -33.868103027344,
+      "longitude": 151.21032714844,
+      "radius": 2
+    },
+    "age": 0,
+    "status": "pending"
+  },
+  {
+    "id": "1453146195947804",
+    "title": "55\" QN85B Neo QLED 4K Smart TV",
+    "description": "55\" QN85B Neo QLED 4K Smart TV (2022) QA55QN85AAWXXY\nMinimal office use, still in excellent condition, no stand - includes VESA bracket. May 2022 receipt from JB Hi-Fi.\nPickup from Chippendale.\nNegotiable.",
+    "ageString": "7 hours ago",
+    "currency": "AU$",
+    "price": 800,
+    "imageUrl": "https://scontent.fcbr1-1.fna.fbcdn.net/v/t45.5328-4/551883849_2263420224155203_59012376689843671_n.jpg?stp=dst-jpg_p180x540_tt6&_nc_cat=107&ccb=1-7&_nc_sid=247b10&_nc_ohc=CrqAE7fiv0oQ7kNvwEb7t7f&_nc_oc=Adl7_dDZsW-9Em89J-E2Onb2GD0Yxf9kAv_2vQUfT_54in2oeNJ1flZvP3aCCRg5vAc&_nc_zt=23&_nc_ht=scontent.fcbr1-1.fna&_nc_gid=kkH8m8U7I8Yu67dquXl2UA&oh=00_AfZUXItMcYaXqI9i16A_Go5yr16XPUaow_XCWZLZa_VtfA&oe=68DADB21",
+    "location": {
+      "name": "Sydney, NSW",
+      "latitude": -33.868103027344,
+      "longitude": 151.21032714844,
+      "radius": 2
+    },
+    "age": 0,
+    "status": "pending"
+  },
+  {
+    "id": "1562398451866842",
+    "title": "Soniq led lcd tv 26 inch",
+    "description": "Pick up: Rooty hill",
+    "ageString": "Unknown",
+    "currency": "AU$",
+    "price": 100,
+    "imageUrl": "https://scontent.fcbr1-1.fna.fbcdn.net/v/t45.5328-4/497939849_4156103134659929_5793487687942628045_n.jpg?stp=dst-jpg_s960x960_tt6&_nc_cat=106&ccb=1-7&_nc_sid=247b10&_nc_ohc=PcDxtb-CCsAQ7kNvwHY1yW-&_nc_oc=AdmHHDYhwXS2E6zgdWmY1KkWJUvLIMlpq2h6eXeY6nPEuPxdMd0LQfvW7aLiOU1BDnc&_nc_zt=23&_nc_ht=scontent.fcbr1-1.fna&_nc_gid=z_7QIGmoS0xQ5x9IgSdrxQ&oh=00_Afa9ZXLsYPIixRbxzQMYR4O7YyflKCPsYiBVY2U41G4spQ&oe=68DAD025",
+    "location": {
+      "name": "Sydney, NSW",
+      "latitude": -33.868103027344,
+      "longitude": 151.21032714844,
+      "radius": 2
+    },
+    "age": 0,
+    "status": "pending"
+  },
+  {
+    "id": "1048300207250987",
+    "title": "Wooden Tv unit for sale",
+    "description": "Tv unit for sale, has little scratches here and there but otherwise not too noticeable, draws open and work perfectly. Price negotiable",
+    "ageString": "a day ago",
+    "currency": "AU$",
+    "price": 200,
+    "imageUrl": "https://scontent.fcbr1-1.fna.fbcdn.net/v/t45.5328-4/552484545_1136322821958906_489401241590828186_n.jpg?stp=dst-jpg_p720x720_tt6&_nc_cat=103&ccb=1-7&_nc_sid=247b10&_nc_ohc=pCdEF2PERbcQ7kNvwEbYO3P&_nc_oc=AdkgoTtwUPY_SD3JN-c329ws5lJ0Mq9c_45IGIhteSESD5ZR9wNAG6PWlWhQqB1Li1E&_nc_zt=23&_nc_ht=scontent.fcbr1-1.fna&_nc_gid=5NZL1EiHWefg2TOY_ptXyA&oh=00_AfaZsJmzx95Yt2N5W-ml5FA1yr64UbUjEpyb8QlvtXfOhA&oe=68DABB8D",
+    "location": {
+      "name": "Sydney, NSW",
+      "latitude": -33.868103027344,
+      "longitude": 151.21032714844,
+      "radius": 2
+    },
+    "age": 0,
+    "status": "pending"
+  },
+  {
+    "id": "2741458812726955",
+    "title": "Tv stand",
+    "description": "Pick up randwick",
+    "ageString": "5 hours ago",
+    "currency": "AU$",
+    "price": 0,
+    "imageUrl": "https://scontent.fcbr1-1.fna.fbcdn.net/v/t45.5328-4/551750535_1482280269654882_2057714512452507523_n.jpg?stp=dst-jpg_s960x960_tt6&_nc_cat=101&ccb=1-7&_nc_sid=247b10&_nc_ohc=do9JZ4TPp_8Q7kNvwGQyhu6&_nc_oc=Adled31V7LVEw7ksX9kjibJDWWN_97F_AdfZzlSG7j_1QpF5jsyAQmMtYW-IFMxyoq4&_nc_zt=23&_nc_ht=scontent.fcbr1-1.fna&_nc_gid=7PgdujyqCoJzb7GEYQdHzw&oh=00_Afa2ML_HsEnJ9CTShrkAsAwvVcmu9WT6lqp62ZEDNaSwrw&oe=68DAD78E",
+    "location": {
+      "name": "Sydney, NSW",
+      "latitude": -33.868103027344,
+      "longitude": 151.21032714844,
+      "radius": 2
+    },
+    "age": 0,
+    "status": "pending"
   }
 ]

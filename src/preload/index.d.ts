@@ -1,5 +1,5 @@
 import { ElectronAPI } from "@electron-toolkit/preload";
-import type { FBMarketListing, SearchFilters } from "../shared/types";
+import type { Listing, SearchFilters } from "../shared/types";
 
 export interface Api {
   // Define your custom API methods and properties here
@@ -7,7 +7,7 @@ export interface Api {
   openFBLogin: () => Promise<boolean>;
   checkForFBSession: () => Promise<boolean>;
   fbLogOut: () => Promise<void>;
-  getFBMarketListings: (settings: SearchFilters) => Promise<FBMarketListing[]>;
+  getFBMarketListings: (settings: SearchFilters) => Promise<Listing[]>;
 }
 
 declare global {

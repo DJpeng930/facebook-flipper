@@ -1,20 +1,3 @@
-export interface FBMarketListing {
-  id: string;
-  title: string;
-  curreny: string;
-  age: string;
-  description: string;
-  price: number;
-  location: string;
-  photo: string;
-  exactLocation: {
-    radius: number;
-    latitude: number;
-    longitude: number;
-    vanityPageId: string;
-  };
-}
-
 export const ITEM_CONDITIONS = ["new", "used_like_new", "used_good", "used_fair"] as const;
 type ItemCondition = (typeof ITEM_CONDITIONS)[number];
 
@@ -23,6 +6,9 @@ type Location = (typeof LOCATIONS)[number];
 
 export const CATEGORIES = ["all", "antiques"] as const;
 type Category = (typeof CATEGORIES)[number];
+
+export const RECOMMENDATIONS = ["AVOID", "LOW_POTENTIAL", "CONSIDER", "STRONG_BUY"] as const;
+type Recommendation = (typeof RECOMMENDATIONS)[number];
 
 export interface SearchFilters {
   query: string; // Search term to filter listings (previously searchTerm)
@@ -33,4 +19,31 @@ export interface SearchFilters {
   location?: Location; // Optional location filter
   itemCondition?: ItemCondition; // Optional item condition filter
   category?: Category;
+}
+// Type for the analysis result
+export interface ListingValueAnalysis {
+  listingId: string;
+  estResaleValue: number;
+  potentialProfit: number;
+  roi: string;
+  dealScore: number; // 1-10
+  recommendation: Recommendation;
+}
+export interface Listing {
+  id: string;
+  title: string;
+  description: string;
+  imageUrl: string;
+  status: "rejected" | "saved" | "pending";
+  price: number;
+  currency: string;
+  location: {
+    name: string;
+    latitude: number;
+    longitude: number;
+    radius: number;
+  };
+  ageString: string; // e.g., "2 days ago"
+  age: number; // milliseconds since 1970
+  valueAnalysis?: Omit<ListingValueAnalysis, "listingId">; // Optional field for value analysis
 }

@@ -1,8 +1,9 @@
 import * as cheerio from "cheerio";
 import { PlaywrightManager } from "../browser/playwright";
 import type { Element } from "domhandler";
-import { FBMarketListing, SearchFilters } from "../../../shared/types";
+import { Listing, SearchFilters } from "../../../shared/types";
 import type { BrowserContext } from "playwright";
+import { ListingRepository } from "../repositories/listing-repository";
 
 export class FacebookScraper {
   private static readonly SELECTORS = {
@@ -13,7 +14,7 @@ export class FacebookScraper {
     listingDescription: "div.xz9dl7a.xyri2b.xsag5q8.x1c1uobl.x126k92a",
     listingLocation: "a span.x193iq5w.xeuugli.x13faqbe.x1vvkbs.x1xmvt09.x1nxh6w3.x1sibtaa.xo1l8bm.xi81zsa",
     listingAge: "abbr span",
-    listingPhoto: "div.x6s0dn4.x78zum5.x1iyjqo2.xl56j7k.x6ikm8r.x10wlt62.xh8yej3.x1ja2u2z img"
+    listingPhoto: "img"
   };
 
   /**
@@ -28,10 +29,10 @@ export class FacebookScraper {
    * @returns A promise that resolves to an array of marketplace listing objects
    * @async
    */
-  public static async getMarketplaceListings(settings: SearchFilters): Promise<FBMarketListing[]> {
+  public static async getMarketplaceListings(settings: SearchFilters): Promise<Listing[]> {
     const listingIds = await this.extractListingIds(settings);
 
-    const listings: FBMarketListing[] = [];
+    const listings: Listing[] = [];
     const batchSize = 10; // Number of listings to process in parallel
 
     const context = await PlaywrightManager.createFacebookContext();
@@ -66,7 +67,7 @@ export class FacebookScraper {
    * @returns A Promise that resolves to a FBMarketListing object containing the extracted listing data
    * @throws May throw errors if the page cannot be loaded or if elements cannot be found
    */
-  private static async extractListingDataFromPage(id: string, context?: BrowserContext): Promise<FBMarketListing> {
+  private static async extractListingDataFromPage(id: string, context?: BrowserContext): Promise<Listing> {
     const isExternalContext = context !== undefined;
     if (!isExternalContext) context = await PlaywrightManager.createFacebookContext();
 
@@ -81,7 +82,8 @@ export class FacebookScraper {
     const description = $(this.SELECTORS.listingDescription).text().trim();
     const location = $(this.SELECTORS.listingLocation).first().text().trim();
     const age = $(this.SELECTORS.listingAge).text();
-    const photo = $(this.SELECTORS.listingPhoto).attr("src");
+    const photo = $(this.SELECTORS.listingPhoto).first().attr("src");
+
     const price = $(this.SELECTORS.listingPrice)
       .contents()
       .filter(function () {
@@ -112,7 +114,12 @@ export class FacebookScraper {
       }
     });
 
-    const exactLocation = dataJson.require[0][3][0].__bbox.require[8][3][0].initialRouteInfo.route.rootView.props.location;
+    const exactLocation: {
+      radius: number;
+      latitude: number;
+      longitude: number;
+      vanityPageId: string;
+    } = dataJson.require[0][3][0].__bbox.require[8][3][0].initialRouteInfo.route.rootView.props.location;
 
     if (!isExternalContext) await context!.close();
 
@@ -120,12 +127,18 @@ export class FacebookScraper {
       id,
       title: this.cleanText(title),
       description: this.cleanText(description),
-      age: age || "Unknown",
-      curreny: price.replace(/[0-9.,\s]/g, "") || "Unknown",
+      ageString: age || "Unknown",
+      currency: price.replace(/[0-9.,\s]/g, "") || "Unknown",
       price: parseFloat(price.replace(/[^0-9.-]+/g, "")) || 0,
-      location,
-      exactLocation,
-      photo: photo || "NA"
+      imageUrl: photo || "https://support.heberjahiz.com/hc/article_attachments/21013076295570",
+      location: {
+        name: location,
+        latitude: exactLocation.latitude,
+        longitude: exactLocation.longitude,
+        radius: exactLocation.radius
+      },
+      age: 0,
+      status: "pending"
     };
   }
 
@@ -166,10 +179,15 @@ export class FacebookScraper {
       listingsDivParent = $(this.SELECTORS.listingDivParent) as cheerio.Cheerio<Element>;
 
       // Select each child listing div and add to set
-      listingsDivParent.children("div").each((_, element) => {
-        const listingData = this.extractListingIdFromCard(element);
-        if (listingData) uniqueListingIds.add(listingData);
-      });
+      const elements = listingsDivParent.children("div").toArray();
+      for (const element of elements) {
+        const listingId = this.extractListingIdFromCard(element);
+        const listingInRepo = listingId ? await ListingRepository.getListingById(listingId) : null;
+        //If listingId is valid and not already in repo or on previous batch
+        if (listingId && listingInRepo === null) {
+          uniqueListingIds.add(listingId);
+        }
+      }
 
       console.log("Current number of unique listings found:", uniqueListingIds.size);
     }

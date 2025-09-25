@@ -30,6 +30,11 @@ const data = {
       name: "Discarded",
       url: "#",
       icon: X
+    },
+    {
+      name: "TEST PAGE",
+      url: "/test",
+      icon: X
     }
   ]
 };

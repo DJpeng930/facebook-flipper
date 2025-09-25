@@ -1,20 +1,5 @@
 import OpenAI from "openai";
-import { FBMarketListing } from "../../../shared/types";
-
-// Type for the analysis result
-interface ListingAnalysis {
-  listingId: string;
-  title: string;
-  dealScore: number;
-  askingPrice: number;
-  estResaleValue: number;
-  potentialProfit: number;
-  roi: string;
-  pros: string[];
-  cons: string[];
-  recommendation: "SKIP" | "MAYBE" | "CHECK_OUT" | "STRONG BUY";
-  reasoning: string;
-}
+import { Listing, ListingValueAnalysis, RECOMMENDATIONS } from "../../../shared/types";
 
 // Extend ImportMetaEnv interface to include our custom environment variable
 declare global {
@@ -63,20 +48,15 @@ ANALYSIS REQUIREMENTS:
 For each listing provided, analyze and provide:
 
 listingId: string; // Unique identifier for the listing
-title: string; // Normalized listing title to include key details
-dealScore: number; // Score from 1-10 on how good of a deal this is
-askingPrice: number; // Price seller is asking
 estResaleValue: number; // Estimated resale value based on market research
-potentialProfit: number; // Potential profit after resale
+potentialProfit: number; // Potential profit after resale (estResaleValue - askingPrice - fees)
 roi: string; // Return on investment percentage
-pros: string[]; // List of pros for this listing
-cons: string[]; // List of cons for this listing
-recommendation: "SKIP" | "MAYBE" | "CHECK_OUT" | "STRONG BUY"; // Overall recommendation based on analysis
-reasoning: string; // Brief explanation of your reasoning
+dealScore: number; // Score from 1-10 on how good of a deal this is
+recommendation: "AVOID" | "LOW_POTENTIAL" | "CONSIDER" | "STRONG_BUY"; // Overall recommendation
 
 Return your analysis as a structured JSON response with an array of listing analyses.`;
 
-  // Fixed schema to return an array of objects
+  // Schema to match ListingValueAnalysis interface
   private static readonly response_format = {
     type: "json_schema" as const,
     json_schema: {
@@ -91,27 +71,16 @@ Return your analysis as a structured JSON response with an array of listing anal
               type: "object",
               properties: {
                 listingId: { type: "string" },
-                title: { type: "string" },
-                dealScore: { type: "integer", minimum: 1, maximum: 10 },
-                askingPrice: { type: "number" },
                 estResaleValue: { type: "number" },
                 potentialProfit: { type: "number" },
                 roi: { type: "string" },
-                pros: {
-                  type: "array",
-                  items: { type: "string" }
-                },
-                cons: {
-                  type: "array",
-                  items: { type: "string" }
-                },
+                dealScore: { type: "integer", minimum: 1, maximum: 10 },
                 recommendation: {
                   type: "string",
-                  enum: ["SKIP", "MAYBE", "CHECK_OUT", "STRONG BUY"]
-                },
-                reasoning: { type: "string" }
+                  enum: RECOMMENDATIONS
+                }
               },
-              required: ["listingId", "title", "dealScore", "askingPrice", "estResaleValue", "potentialProfit", "roi", "pros", "cons", "recommendation", "reasoning"],
+              required: ["listingId", "estResaleValue", "potentialProfit", "roi", "dealScore", "recommendation"],
               additionalProperties: false
             }
           }
@@ -122,7 +91,7 @@ Return your analysis as a structured JSON response with an array of listing anal
     }
   };
 
-  static async analyzeListings(listings: Partial<FBMarketListing>[]): Promise<ListingAnalysis[]> {
+  static async analyzeListings(listings: Listing[]): Promise<Listing[]> {
     try {
       const response = await this.openai.chat.completions.create({
         model: this.model,
@@ -145,14 +114,27 @@ Return your analysis as a structured JSON response with an array of listing anal
       }
 
       // Parse the JSON response
-      const parsedResponse = JSON.parse(content) as ListingAnalysis[];
+      const parsedResponse = JSON.parse(content) as { analyses: ListingValueAnalysis[] };
 
       // Validate the structure
-      if (!parsedResponse || !Array.isArray(parsedResponse)) {
+      if (!parsedResponse || !Array.isArray(parsedResponse.analyses)) {
         throw new Error("Invalid response structure: expected analyses array");
       }
 
-      return parsedResponse;
+      listings.forEach((listing) => {
+        const analysis = parsedResponse.analyses.find((a) => a.listingId === listing.id);
+
+        if (!analysis) {
+          throw new Error(`LLM did not output analysis for listing ID: ${listing.id}`);
+        }
+
+        //eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { listingId, ...rest } = analysis;
+        listing.valueAnalysis = rest;
+        return listing;
+      });
+
+      return listings;
     } catch (error) {
       console.error("Error generating or parsing analysis:", error);
 
