@@ -14,7 +14,8 @@ export class FacebookScraper {
     listingDescription: "div.xz9dl7a.xyri2b.xsag5q8.x1c1uobl.x126k92a",
     listingLocation: "a span.x193iq5w.xeuugli.x13faqbe.x1vvkbs.x1xmvt09.x1nxh6w3.x1sibtaa.xo1l8bm.xi81zsa",
     listingAge: "abbr span",
-    listingPhoto: "img"
+    listingPhoto: "img",
+    noListingsFound: "h2"
   };
 
   /**
@@ -163,12 +164,21 @@ export class FacebookScraper {
 
     let listingsDivParent: cheerio.Cheerio<Element>;
     const uniqueListingIds = new Set<string>();
+    let numScrolls = 0;
+    const maxScrolls = settings.maxScrolls || 5;
 
-    while (uniqueListingIds.size < settings.numListings) {
+    while (uniqueListingIds.size < settings.numListings && numScrolls < maxScrolls) {
       const newContent = await page.content();
       const $ = cheerio.load(newContent);
 
+      // If no listings found, break
+      if ($(this.SELECTORS.noListingsFound).filter((_, el) => $(el).text().includes("No listings found")).length > 0) {
+        console.log("No listings found for the given search criteria.");
+        break;
+      }
+
       console.log("Scrolling to load more listings...");
+      numScrolls++;
       await page.evaluate(() => {
         window.scrollBy(0, window.innerHeight * 2);
       });
@@ -209,7 +219,17 @@ export class FacebookScraper {
    * @private
    */
   private static generateSearchUrl(settings: SearchFilters): string {
-    const baseUrl = `https://www.facebook.com/marketplace/${settings.location || "sydney"}/search?`;
+    //https://www.facebook.com/marketplace/sydney/electronics/?query=laptop
+    //https://www.facebook.com/marketplace/sydney/search?query=laptop
+
+    let baseUrl = `https://www.facebook.com/marketplace/${settings.location || "sydney"}/`;
+
+    if (settings.category === "all") {
+      baseUrl += "search/?";
+    } else {
+      baseUrl += `${settings.category}/?`;
+    }
+
     const params = new URLSearchParams();
 
     if (settings.query) {
@@ -227,6 +247,8 @@ export class FacebookScraper {
     if (settings.itemCondition) {
       params.append("itemCondition", settings.itemCondition);
     }
+
+    console.log("Generated search URL:", baseUrl + params.toString());
 
     return baseUrl + params.toString();
   }

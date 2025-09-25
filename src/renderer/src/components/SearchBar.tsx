@@ -5,6 +5,7 @@ import { Button } from "./ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { Input } from "./ui/input";
 import { ITEM_CONDITIONS, LOCATIONS, CATEGORIES, SearchFilters } from "../../../shared/types";
+import { kebabToTitle, snakeToTitle } from "@renderer/lib/utils";
 
 interface SearchBarProps {
   onSearch: (filters: SearchFilters) => void;
@@ -15,20 +16,19 @@ interface SearchBarProps {
 const dayOptions = [
   { value: 1, label: "24h" },
   { value: 7, label: "7d" },
-  { value: 30, label: "30d" },
-  { value: 90, label: "90d" }
+  { value: 30, label: "30d" }
 ];
 
 export function SearchBar({ onSearch, initialFilters, isLoading }: SearchBarProps) {
   const [filters, setFilters] = useState<SearchFilters>({
     query: initialFilters?.query || "",
-    numListings: initialFilters?.numListings || 20,
+    numListings: initialFilters?.numListings || 10,
     minPrice: initialFilters?.minPrice,
     maxPrice: initialFilters?.maxPrice,
     daysSinceListed: initialFilters?.daysSinceListed,
-    location: initialFilters?.location,
+    location: initialFilters?.location || LOCATIONS[0],
     itemCondition: initialFilters?.itemCondition,
-    category: initialFilters?.category
+    category: initialFilters?.category || "all"
   });
 
   const updateFilter = <K extends keyof SearchFilters>(key: K, value: SearchFilters[K]) => {
@@ -117,7 +117,7 @@ export function SearchBar({ onSearch, initialFilters, isLoading }: SearchBarProp
                 <Package className="h-3.5 w-3.5 text-indigo-500" />
                 Category
               </label>
-              <Select value={filters.category || "all"} onValueChange={(value) => updateFilter("category", value === "all" ? undefined : (value as SearchFilters["category"]))}>
+              <Select value={filters.category || "all"} onValueChange={(value) => updateFilter("category", value as SearchFilters["category"])}>
                 <SelectTrigger className="w-full h-9 text-sm bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500">
                   <SelectValue placeholder="All categories" />
                 </SelectTrigger>
@@ -125,7 +125,7 @@ export function SearchBar({ onSearch, initialFilters, isLoading }: SearchBarProp
                   <SelectItem value="all">All categories</SelectItem>
                   {CATEGORIES.filter((cat) => cat !== "all").map((category) => (
                     <SelectItem key={category} value={category}>
-                      {category.charAt(0).toUpperCase() + category.slice(1)}
+                      {kebabToTitle(category)}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -164,15 +164,14 @@ export function SearchBar({ onSearch, initialFilters, isLoading }: SearchBarProp
                   <MapPin className="h-3.5 w-3.5 text-red-500" />
                   Location
                 </label>
-                <Select value={filters.location || "any_location"} onValueChange={(value) => updateFilter("location", (value as SearchFilters["location"]) || undefined)}>
+                <Select value={filters.location || "sydney"} onValueChange={(value) => updateFilter("location", value as SearchFilters["location"])}>
                   <SelectTrigger className="w-full h-9 text-sm bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500">
-                    <SelectValue placeholder="Any" />
+                    <SelectValue placeholder="Sydney" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="any_location">Any</SelectItem>
-                    {Object.entries(LOCATIONS).map(([value, label]) => (
-                      <SelectItem key={value} value={value}>
-                        {label}
+                    {LOCATIONS.map((location) => (
+                      <SelectItem key={location} value={location}>
+                        {snakeToTitle(location)}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -190,9 +189,9 @@ export function SearchBar({ onSearch, initialFilters, isLoading }: SearchBarProp
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="any_condition">Any</SelectItem>
-                    {Object.entries(ITEM_CONDITIONS).map(([value, label]) => (
-                      <SelectItem key={value} value={value}>
-                        {label}
+                    {ITEM_CONDITIONS.map((condition) => (
+                      <SelectItem key={condition} value={condition}>
+                        {snakeToTitle(condition)}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -216,7 +215,12 @@ export function SearchBar({ onSearch, initialFilters, isLoading }: SearchBarProp
       </div>
 
       {/* Right: Search Button */}
-      <Button onClick={handleSearch} disabled={isLoading} className="h-12 sm:h-14 aspect-square rounded-l-none  bg-blue-500 hover:bg-blue-600" aria-label="Search">
+      <Button
+        onClick={handleSearch}
+        disabled={isLoading || (!filters.query && filters.category === "all")}
+        className="h-12 sm:h-14 aspect-square rounded-l-none  bg-blue-500 hover:bg-blue-600"
+        aria-label="Search"
+      >
         {!isLoading && <Search className="h-4 w-4 sm:h-5 sm:w-5" />}
         {isLoading && <LoaderCircle className="h-5 w-5 animate-spin text-white" />}
       </Button>

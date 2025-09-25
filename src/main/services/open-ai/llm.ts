@@ -92,6 +92,10 @@ Return your analysis as a structured JSON response with an array of listing anal
   };
 
   static async analyzeListings(listings: Listing[]): Promise<Listing[]> {
+    if (listings.length === 0) {
+      return [];
+    }
+
     try {
       const response = await this.openai.chat.completions.create({
         model: this.model,

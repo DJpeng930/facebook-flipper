@@ -1,10 +1,28 @@
 export const ITEM_CONDITIONS = ["new", "used_like_new", "used_good", "used_fair"] as const;
 type ItemCondition = (typeof ITEM_CONDITIONS)[number];
 
-export const LOCATIONS = ["new_york", "california", "texas", "florida", "illinois", "pennsylvania", "ohio", "georgia", "north_carolina", "michigan"] as const;
+export const LOCATIONS = ["sydney"] as const;
 type Location = (typeof LOCATIONS)[number];
 
-export const CATEGORIES = ["all", "antiques"] as const;
+export const CATEGORIES = [
+  "all",
+  "electronics",
+  "vehicles",
+  "apparel",
+  "classifieds",
+  "entertainment",
+  "family",
+  "free",
+  "garden",
+  "hobbies",
+  "home",
+  "home-improvements",
+  "instruments",
+  "office-supplies",
+  "pets",
+  "sports",
+  "toys"
+] as const;
 type Category = (typeof CATEGORIES)[number];
 
 export const RECOMMENDATIONS = ["AVOID", "LOW_POTENTIAL", "CONSIDER", "STRONG_BUY"] as const;
@@ -18,7 +36,8 @@ export interface SearchFilters {
   daysSinceListed?: number; // Optional days since listed filter
   location?: Location; // Optional location filter
   itemCondition?: ItemCondition; // Optional item condition filter
-  category?: Category;
+  category: Category;
+  maxScrolls?: number; // Max number of scrolls it can perfom to search for unique listings (default 5)
 }
 // Type for the analysis result
 export interface ListingValueAnalysis {
