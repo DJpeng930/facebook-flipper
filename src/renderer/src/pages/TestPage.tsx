@@ -1,17 +1,12 @@
-export default function TestPage() {
-  async function handleClick() {
-    const l = await window.api.getFBMarketListings({
-      query: "laptop",
-      numListings: 10
-    });
+import { useUser } from "@renderer/contexts/UserContext";
 
-    console.log(l);
-  }
+export default function TestPage() {
+  const { login } = useUser();
 
   return (
     <div>
       <h1>Test Page</h1>
-      <button onClick={handleClick}>Get Listings</button>
+      <button onClick={login}>Get Listings</button>
     </div>
   );
 }

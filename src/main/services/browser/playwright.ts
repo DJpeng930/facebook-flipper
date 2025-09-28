@@ -1,7 +1,6 @@
 import playwright from "playwright";
 import { app } from "electron";
 import path from "path";
-import fs from "fs";
 
 interface BrowserConfig {
   headless?: boolean;
@@ -31,9 +30,5 @@ export class PlaywrightManager {
       console.error("Failed to create facebook browser context:", error);
       throw error;
     }
-  }
-
-  static async deleteFacebookProfile() {
-    await fs.promises.rm(this.FB_PROFILE_PATH, { recursive: true, force: true });
   }
 }

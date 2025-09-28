@@ -28,6 +28,11 @@ type Category = (typeof CATEGORIES)[number];
 export const RECOMMENDATIONS = ["AVOID", "LOW_POTENTIAL", "CONSIDER", "STRONG_BUY"] as const;
 type Recommendation = (typeof RECOMMENDATIONS)[number];
 
+export interface User {
+  name: string;
+  profilePicture?: string;
+}
+
 export interface SearchFilters {
   query: string; // Search term to filter listings (previously searchTerm)
   numListings: number; // Number of listings to fetch
