@@ -5,14 +5,17 @@ import SearchPage from "./pages/SearchPage";
 import TestPage from "./pages/TestPage";
 import { UserProvider, useUser } from "./contexts/UserContext";
 import LoginPage from "./pages/LoginPage";
-import LoadingPage from "./pages/LoadingPage";
+import AuthLoadingPage from "./pages/AuthLoadingPage";
+import PendingReviewPage from "./pages/PendingReviewPage";
+import SavedPage from "./pages/SavedPage";
+import DiscardedPage from "./pages/DiscardedPage";
 
 // Layout component with sidebar for most pages
 function SidebarLayout() {
   const { user, loading } = useUser();
 
   if (loading) {
-    return <LoadingPage />;
+    return <AuthLoadingPage />;
   }
 
   if (!user) {
@@ -47,6 +50,18 @@ const router = createBrowserRouter([
       {
         path: "test",
         Component: TestPage
+      },
+      {
+        path: "pending-review",
+        Component: PendingReviewPage
+      },
+      {
+        path: "saved",
+        Component: SavedPage
+      },
+      {
+        path: "discarded",
+        Component: DiscardedPage
       }
     ]
   },

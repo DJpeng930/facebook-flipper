@@ -1,6 +1,6 @@
 import path from "path";
 import { app } from "electron";
-import { Listing } from "../../../shared/types";
+import { Listing, ListingStatus } from "../../../shared/types";
 import fs from "fs";
 
 interface ListingHashTable {
@@ -14,56 +14,69 @@ export class ListingRepository {
   private static cache: ListingHashTable | null = null;
 
   public static async getListingById(id: string): Promise<Listing | null> {
-    const listings = await this.getListings();
-    return listings[id] || null;
+    await this.initCache();
+    return this.cache![id] || null;
   }
 
-  public static async getListings(): Promise<ListingHashTable> {
-    // Return cached data if we have it
-    if (this.cache) {
-      return this.cache;
-    }
+  public static async getPendingListings(): Promise<Listing[]> {
+    await this.initCache();
+    return this.hashToList(this.cache!).filter((listing) => listing.status === "pending");
+  }
 
-    // Load from file
-    if (!fs.existsSync(this.LISTINGS_FILE_PATH)) {
-      this.cache = {};
-      return this.cache;
-    }
+  public static async getDiscardedListings(): Promise<Listing[]> {
+    await this.initCache();
+    return this.hashToList(this.cache!).filter((listing) => listing.status === "discarded");
+  }
 
-    const fileContent = await fs.promises.readFile(this.LISTINGS_FILE_PATH, "utf-8");
-    this.cache = JSON.parse(fileContent) as ListingHashTable;
-    return this.cache;
+  public static async getSavedListings(): Promise<Listing[]> {
+    await this.initCache();
+    return this.hashToList(this.cache!).filter((listing) => listing.status === "saved");
+  }
+
+  public static async getAllListings(): Promise<Listing[]> {
+    await this.initCache();
+    return this.hashToList(this.cache!);
+  }
+
+  public static async updateListingStatus(id: string, status: ListingStatus): Promise<void> {
+    await this.initCache(); // Ensure cache is loaded
+    if (this.cache![id]) this.cache![id].status = status;
+    await this.saveCacheToFile();
   }
 
   public static async saveListings(listings: Listing[]): Promise<void> {
-    await this.getListings(); // Ensure cache is loaded
+    await this.initCache(); // Ensure cache is loaded
 
-    // Update cache with all listings
-    for (const listing of listings) {
+    listings.forEach((listing) => {
       this.cache![listing.id] = listing;
+    });
+
+    await this.saveCacheToFile();
+  }
+
+  private static async initCache(): Promise<void> {
+    // Return cached data if we have it
+    if (this.cache) return;
+
+    // If file not found, initialize cache
+    if (!fs.existsSync(this.LISTINGS_FILE_PATH)) {
+      this.cache = {};
+      return;
     }
 
-    // Save once
-    await this.saveToFile();
+    // Read from file and populate cache
+    const fileContent = await fs.promises.readFile(this.LISTINGS_FILE_PATH, "utf-8");
+    this.cache = JSON.parse(fileContent) as ListingHashTable;
+    return;
   }
 
-  static async saveListing(listing: Listing): Promise<void> {
-    await this.getListings(); // Ensure cache is loaded
-    this.cache![listing.id] = listing;
-    await this.saveToFile();
-  }
+  private static async saveCacheToFile(): Promise<void> {
+    await this.initCache(); // Ensure cache is loaded
 
-  static async updateListing(id: string, updates: Partial<Listing>): Promise<void> {
-    await this.getListings(); // Ensure cache is loaded
-    this.cache![id] = { ...this.cache![id], ...updates };
-    await this.saveToFile();
-  }
-
-  private static async saveToFile(): Promise<void> {
     await fs.promises.writeFile(this.LISTINGS_FILE_PATH, JSON.stringify(this.cache, null, 2), "utf-8");
   }
 
-  static getSavedListingsFilePath(): string {
-    return this.LISTINGS_FILE_PATH;
+  private static hashToList(listings: ListingHashTable): Listing[] {
+    return Object.entries(listings).map(([_id, listing]) => listing);
   }
 }

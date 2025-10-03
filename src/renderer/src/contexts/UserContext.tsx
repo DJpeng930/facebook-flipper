@@ -46,7 +46,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
   }, []);
 
   async function login(): Promise<boolean> {
-    const fbLogin = await window.api.openFBLogin();
+    const fbLogin = await window.api.facebook.openLogin();
 
     console.log("FB Login Result:", fbLogin);
 
@@ -72,7 +72,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
     }
 
     //if user is logged in, proceed to log out
-    const loggedOut = await window.api.fbLogOut();
+    const loggedOut = await window.api.facebook.logout();
 
     // ifLogout failed
     if (!loggedOut) {
@@ -87,7 +87,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
   }
 
   async function refreshSession() {
-    const user = await window.api.checkForFBSession();
+    const user = await window.api.facebook.checkSession();
 
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(user));
     setUser(user);

@@ -53,12 +53,14 @@ export interface ListingValueAnalysis {
   dealScore: number; // 1-10
   recommendation: Recommendation;
 }
+
+export type ListingStatus = "pending" | "saved" | "discarded";
 export interface Listing {
   id: string;
   title: string;
   description: string;
   imageUrl: string;
-  status: "rejected" | "saved" | "pending";
+  status: ListingStatus;
   price: number;
   currency: string;
   location: {

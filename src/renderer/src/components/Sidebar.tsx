@@ -2,26 +2,27 @@ import { Globe, Check, X, ClockFading, LogOut } from "lucide-react";
 import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarRail } from "./ui/sidebar";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { useUser } from "@renderer/contexts/UserContext";
+import { Link, useLocation } from "react-router";
 
 const links = [
   {
-    name: "Listing Scraper",
+    name: "Marketplace Search",
     url: "/",
     icon: Globe
   },
   {
     name: "Pending Review",
-    url: "/archive",
+    url: "/pending-review",
     icon: ClockFading
   },
   {
     name: "Saved",
-    url: "#",
+    url: "/saved",
     icon: Check
   },
   {
     name: "Discarded",
-    url: "#",
+    url: "/discarded",
     icon: X
   },
   {
@@ -32,6 +33,8 @@ const links = [
 ];
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const location = useLocation();
+
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarContent>
@@ -40,11 +43,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenu>
             {links.map((item) => (
               <SidebarMenuItem key={item.name}>
-                <SidebarMenuButton className={window.location.pathname === item.url ? "bg-gray-200" : ""} asChild>
-                  <a href={item.url}>
+                <SidebarMenuButton className={location.pathname === item.url ? "bg-gray-200" : ""} asChild>
+                  <Link to={item.url}>
                     <item.icon />
                     <span>{item.name}</span>
-                  </a>
+                  </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             ))}
