@@ -4,6 +4,7 @@ import { createBrowserRouter, RouterProvider, Outlet, Navigate } from "react-rou
 import SearchPage from "./pages/SearchPage";
 import TestPage from "./pages/TestPage";
 import { UserProvider, useUser } from "./contexts/UserContext";
+import { SearchProvider } from "./contexts/SearchContext";
 import LoginPage from "./pages/LoginPage";
 import AuthLoadingPage from "./pages/AuthLoadingPage";
 import PendingReviewPage from "./pages/PendingReviewPage";
@@ -85,7 +86,9 @@ const router = createBrowserRouter([
 function App() {
   return (
     <UserProvider>
-      <RouterProvider router={router} />
+      <SearchProvider>
+        <RouterProvider router={router} />
+      </SearchProvider>
     </UserProvider>
   );
 }

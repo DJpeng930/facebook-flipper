@@ -1,48 +1,29 @@
-import { useState } from "react";
 import { SearchBar } from "@renderer/components/SearchBar";
-import { Listing, SearchFilters } from "src/shared/types";
+import { SearchFilters } from "src/shared/types";
 import ListingCard from "@renderer/components/ListingCard";
 import { Search } from "lucide-react";
 import Header from "@renderer/components/Header";
-import { toast } from "sonner";
+import { useSearch } from "@renderer/contexts/SearchContext";
 
 export default function MarketplaceSearch() {
-  const [listings, setListings] = useState<Listing[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [hasSearched, setHasSearched] = useState(false);
+  const { listings, isLoading, hasSearched, executeSearch, removeListing } = useSearch();
 
   async function handleSearch(settings: SearchFilters) {
-    setIsLoading(true);
-    setHasSearched(true);
-
-    const listings = await window.api.facebook.scrapeMarketListings(settings);
-
-    const res = await window.api.llm.analyzeListings(listings);
-
-    if (res.error?.code === 401) {
-      toast.error(`Error: Unauthorized. Please check your API key in Settings.`);
-    } else if (res.error) {
-      toast.error(`Error analyzing listings: ${res.error.message}`);
-    } else {
-      await window.api.listingRepo.save(res.listings);
-      setListings(res.listings);
-    }
-
-    setIsLoading(false);
+    await executeSearch(settings);
   }
 
   const handleButtonActionComplete = (listingId: string) => {
-    setListings((prevListings) => prevListings.filter((listing) => listing.id !== listingId));
+    removeListing(listingId);
   };
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen ">
       <Header pageName="Marketplace Search" />
 
-      <div className="pt-2  p-10">
+      <div className="pt-8  p-10">
         {/* Search Form */}
 
-        <div className="mb-4">
+        <div className="mb-4 ">
           <SearchBar isLoading={isLoading} onSearch={handleSearch}></SearchBar>
         </div>
 
@@ -55,7 +36,7 @@ export default function MarketplaceSearch() {
         )}
 
         {/* Results */}
-        {!isLoading && hasSearched && (
+        {!isLoading && hasSearched && listings.length > 0 && (
           <div className="space-y-6">
             <div className="flex items-center justify-between">
               <h2 className="text-2xl font-semibold text-foreground">Search Results:</h2>
@@ -71,7 +52,7 @@ export default function MarketplaceSearch() {
         )}
 
         {/* Empty State */}
-        {!hasSearched && (
+        {(!hasSearched || listings.length === 0) && !isLoading && (
           <div className="flex items-center justify-center min-h-96">
             <div className="text-center py-12">
               <Search className="h-16 w-16 text-muted-foreground mx-auto mb-4" />

@@ -4,10 +4,15 @@ import { useEffect, useState } from "react";
 import { Listing } from "src/shared/types";
 import Header from "@renderer/components/Header";
 import { calculateListingsDistance } from "@renderer/lib/utils";
+import FilterBar from "@renderer/components/FilterBar";
+import { useListingFilters } from "@renderer/hooks/useListingFilters";
 
 export default function SavedPage() {
   const [listings, setListings] = useState<Listing[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+
+  // Use the custom hook for filtering and sorting
+  const { searchQuery, setSearchQuery, sortBy, setSortBy, filteredListings } = useListingFilters(listings);
 
   useEffect(() => {
     async function fetchSavedListings() {
@@ -32,7 +37,7 @@ export default function SavedPage() {
     <div className="min-h-screen ">
       <Header pageName="Saved Listings" />
 
-      <div className="pt-2  p-10">
+      <div className="pt-6  p-10">
         {/* Loading State */}
         {isLoading && (
           <div className="text-center py-12">
@@ -41,22 +46,42 @@ export default function SavedPage() {
           </div>
         )}
 
-        {/* Results */}
-        {!isLoading && (
-          <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <p className="text-muted-foreground">{listings.length} saved listings</p>
-            </div>
+        {/* Search and Filter Bar */}
+        {listings.length > 0 && (
+          <FilterBar
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+            sortBy={sortBy}
+            onSortChange={setSortBy}
+            totalCount={listings.length}
+            filteredCount={filteredListings.length}
+            pageType="saved"
+          />
+        )}
 
+        {/* Results */}
+        {!isLoading && filteredListings.length > 0 && (
+          <div className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {listings.map((listing) => (
+              {filteredListings.map((listing) => (
                 <ListingCard key={listing.id} listing={listing} showDiscardButton onButtonActionComplete={onListingActionComplete} />
               ))}
             </div>
           </div>
         )}
 
-        {/* Empty State */}
+        {/* Empty State - No Results from Search */}
+        {!isLoading && listings.length > 0 && filteredListings.length === 0 && (
+          <div className="flex items-center justify-center min-h-96">
+            <div className="text-center py-12">
+              <Search className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+              <h3 className="text-xl font-semibold text-foreground mb-2">No results found</h3>
+              <p className="text-muted-foreground">Try adjusting your search query</p>
+            </div>
+          </div>
+        )}
+
+        {/* Empty State - No Saved Listings */}
         {listings.length === 0 && !isLoading && (
           <div className="flex items-center justify-center min-h-96">
             <div className="text-center py-12">
