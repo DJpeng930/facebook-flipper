@@ -1,79 +1,59 @@
-import path from "path";
-import { app } from "electron";
+import Store from "electron-store";
 import { Listing, ListingStatus } from "../../../shared/types";
-import fs from "fs";
 
 interface ListingHashTable {
   [id: string]: Listing;
 }
 
 export class ListingRepository {
-  private static readonly LISTINGS_FILE_PATH: string = path.join(app.getPath("userData"), "listings.json");
+  private static store = new Store<{ listings: ListingHashTable }>({
+    name: "listings",
+    defaults: {
+      listings: {}
+    }
+  });
 
-  // Simple in-memory cache
-  private static cache: ListingHashTable | null = null;
-
-  public static async getListingById(id: string): Promise<Listing | null> {
-    await this.initCache();
-    return this.cache![id] || null;
+  public static getListingById(id: string): Listing | null {
+    const listings = this.store.get("listings");
+    return listings[id] || null;
   }
 
-  public static async getPendingListings(): Promise<Listing[]> {
-    await this.initCache();
-    return this.hashToList(this.cache!).filter((listing) => listing.status === "pending");
+  public static getPendingListings(): Listing[] {
+    const listings = this.store.get("listings");
+    return this.hashToList(listings).filter((listing) => listing.status === "pending");
   }
 
-  public static async getDiscardedListings(): Promise<Listing[]> {
-    await this.initCache();
-    return this.hashToList(this.cache!).filter((listing) => listing.status === "discarded");
+  public static getDiscardedListings(): Listing[] {
+    const listings = this.store.get("listings");
+    return this.hashToList(listings).filter((listing) => listing.status === "discarded");
   }
 
-  public static async getSavedListings(): Promise<Listing[]> {
-    await this.initCache();
-    return this.hashToList(this.cache!).filter((listing) => listing.status === "saved");
+  public static getSavedListings(): Listing[] {
+    const listings = this.store.get("listings");
+    return this.hashToList(listings).filter((listing) => listing.status === "saved");
   }
 
-  public static async getAllListings(): Promise<Listing[]> {
-    await this.initCache();
-    return this.hashToList(this.cache!);
+  public static getAllListings(): Listing[] {
+    const listings = this.store.get("listings");
+    return this.hashToList(listings);
   }
 
-  public static async updateListingStatus(id: string, status: ListingStatus): Promise<void> {
-    await this.initCache(); // Ensure cache is loaded
-    if (this.cache![id]) this.cache![id].status = status;
-    await this.saveCacheToFile();
+  public static updateListingStatus(id: string, status: ListingStatus): void {
+    const listings = this.store.get("listings");
+    if (listings[id]) {
+      listings[id].status = status;
+      this.store.set("listings", listings);
+    }
   }
 
-  public static async saveListings(listings: Listing[]): Promise<void> {
-    await this.initCache(); // Ensure cache is loaded
+  public static saveListings(listings: Listing[]): void {
+    const currentListings = this.store.get("listings");
 
     listings.forEach((listing) => {
-      this.cache![listing.id] = listing;
+      currentListings[listing.id] = listing;
     });
 
-    await this.saveCacheToFile();
-  }
-
-  private static async initCache(): Promise<void> {
-    // Return cached data if we have it
-    if (this.cache) return;
-
-    // If file not found, initialize cache
-    if (!fs.existsSync(this.LISTINGS_FILE_PATH)) {
-      this.cache = {};
-      return;
-    }
-
-    // Read from file and populate cache
-    const fileContent = await fs.promises.readFile(this.LISTINGS_FILE_PATH, "utf-8");
-    this.cache = JSON.parse(fileContent) as ListingHashTable;
-    return;
-  }
-
-  private static async saveCacheToFile(): Promise<void> {
-    await this.initCache(); // Ensure cache is loaded
-
-    await fs.promises.writeFile(this.LISTINGS_FILE_PATH, JSON.stringify(this.cache, null, 2), "utf-8");
+    this.store.set("listings", currentListings);
   }
 
   private static hashToList(listings: ListingHashTable): Listing[] {

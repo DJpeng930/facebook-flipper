@@ -50,46 +50,49 @@ export default function ListingCard({ listing, showDiscardButton = false, showSa
                 <BadgeInfo className="h-3 w-3 mr-1 text-green-500" />
                 Status
               </div>
-              <div className="font-bold text-green-700 text-xs">{listing.valueAnalysis!.recommendation}</div>
+              <div className="font-bold text-green-700 text-xs">{listing.valueAnalysis?.recommendation}</div>
             </div>
           </div>
 
           {/* ROI and Profit Combined */}
-          <div className="bg-gray-50 rounded-lg p-2 space-y-2">
-            <div
-              className={`${
-                listing.valueAnalysis!.potentialProfit >= 0 ? "bg-gradient-to-r from-emerald-50 to-green-50 border border-emerald-200" : "bg-gradient-to-r from-red-50 to-rose-50 border border-red-200"
-              } p-2 rounded-md`}
-            >
-              <div className="flex items-center justify-center">
-                <TrendingUp className={`h-3 w-3 mr-1 ${listing.valueAnalysis!.potentialProfit >= 0 ? "text-emerald-600" : "text-red-600"}`} />
-                <span className={`text-xs font-medium ${listing.valueAnalysis!.potentialProfit >= 0 ? "text-emerald-800" : "text-red-800"}`}>ROI:</span>
-                <span className={`text-sm font-bold ml-1 ${listing.valueAnalysis!.potentialProfit >= 0 ? "text-emerald-700" : "text-red-700"}`}>{listing.valueAnalysis!.roi}</span>
+          {listing.valueAnalysis && (
+            <div className="bg-gray-50 rounded-lg p-2 space-y-2">
+              <div
+                className={`${
+                  listing.valueAnalysis!.potentialProfit >= 0
+                    ? "bg-gradient-to-r from-emerald-50 to-green-50 border border-emerald-200"
+                    : "bg-gradient-to-r from-red-50 to-rose-50 border border-red-200"
+                } p-2 rounded-md`}
+              >
+                <div className="flex items-center justify-center">
+                  <TrendingUp className={`h-3 w-3 mr-1 ${listing.valueAnalysis!.potentialProfit >= 0 ? "text-emerald-600" : "text-red-600"}`} />
+                  <span className={`text-xs font-medium ${listing.valueAnalysis!.potentialProfit >= 0 ? "text-emerald-800" : "text-red-800"}`}>ROI:</span>
+                  <span className={`text-sm font-bold ml-1 ${listing.valueAnalysis!.potentialProfit >= 0 ? "text-emerald-700" : "text-red-700"}`}>{listing.valueAnalysis!.roi}</span>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <div className="bg-white rounded-md p-2 border border-gray-200">
+                  <div className="flex items-center text-xs text-gray-600 mb-1">
+                    <DollarSign className="h-3 w-3 mr-1 text-blue-500" />
+                    Resale
+                  </div>
+                  <div className="font-bold text-blue-700 text-sm">${listing.valueAnalysis!.estResaleValue.toLocaleString()}</div>
+                </div>
+                <div className="bg-white rounded-md p-2 border border-gray-200">
+                  <div className="flex items-center text-xs text-gray-600 mb-1">
+                    <DollarSign className="h-3 w-3 mr-1 text-emerald-500" />
+                    Profit
+                  </div>
+                  <div className="font-bold text-emerald-700 text-sm">${listing.valueAnalysis!.potentialProfit.toLocaleString()}</div>
+                </div>
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-2">
-              <div className="bg-white rounded-md p-2 border border-gray-200">
-                <div className="flex items-center text-xs text-gray-600 mb-1">
-                  <DollarSign className="h-3 w-3 mr-1 text-blue-500" />
-                  Resale
-                </div>
-                <div className="font-bold text-blue-700 text-sm">${listing.valueAnalysis!.estResaleValue.toLocaleString()}</div>
-              </div>
-              <div className="bg-white rounded-md p-2 border border-gray-200">
-                <div className="flex items-center text-xs text-gray-600 mb-1">
-                  <DollarSign className="h-3 w-3 mr-1 text-emerald-500" />
-                  Profit
-                </div>
-                <div className="font-bold text-emerald-700 text-sm">${listing.valueAnalysis!.potentialProfit.toLocaleString()}</div>
-              </div>
-            </div>
-          </div>
-
+          )}
           {/* Location and Time - Inline */}
           <div className="flex items-center justify-between text-xs text-gray-500">
             <div className="flex items-center">
               <MapPin className="h-3 w-3 mr-1" />
-              <span>{listing.location.name}</span>
+              <span>{listing.location.distance === null ? listing.location.name : listing.location.distance.toFixed(1) + " km"}</span>
             </div>
             <div className="flex items-center">
               <Clock className="h-3 w-3 mr-1" />

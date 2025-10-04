@@ -1,4 +1,4 @@
-import { Globe, Check, X, ClockFading, LogOut } from "lucide-react";
+import { Globe, Check, X, ClockFading, LogOut, Settings } from "lucide-react";
 import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarRail } from "./ui/sidebar";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { useUser } from "@renderer/contexts/UserContext";
@@ -23,11 +23,6 @@ const links = [
   {
     name: "Discarded",
     url: "/discarded",
-    icon: X
-  },
-  {
-    name: "TEST PAGE",
-    url: "/test",
     icon: X
   }
 ];
@@ -55,6 +50,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
+        <SidebarMenuButton className={location.pathname === "/settings" ? "bg-gray-200" : ""} asChild>
+          <Link to={"/settings"}>
+            <Settings />
+            <span>Settings</span>
+          </Link>
+        </SidebarMenuButton>
         <NavUser />
       </SidebarFooter>
       <SidebarRail />

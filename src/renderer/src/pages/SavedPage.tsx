@@ -3,6 +3,7 @@ import { Search } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Listing } from "src/shared/types";
 import Header from "@renderer/components/Header";
+import { calculateListingsDistance } from "@renderer/lib/utils";
 
 export default function SavedPage() {
   const [listings, setListings] = useState<Listing[]>([]);
@@ -11,7 +12,10 @@ export default function SavedPage() {
   useEffect(() => {
     async function fetchSavedListings() {
       setIsLoading(true);
-      const savedListings = await window.api.listingRepo.getSaved();
+      const savedListings = await calculateListingsDistance(await window.api.listingRepo.getSaved());
+
+      console.log("Saved listings:", savedListings);
+
       setListings(savedListings);
       setIsLoading(false);
     }

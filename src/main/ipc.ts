@@ -4,6 +4,7 @@ import { FacebookAuth } from "./services/facebook/auth";
 import { FacebookScraper } from "./services/facebook/scraper";
 import { LargeLanguageModel } from "./services/open-ai/llm";
 import { ListingRepository } from "./services/repositories/listing-repository";
+import { SettingsRepository } from "./services/repositories/settings-repository";
 
 // --- Facebook ---
 ipcMain.handle(IPC_EVENTS.FB_OPEN_LOGIN, async () => {
@@ -28,18 +29,39 @@ ipcMain.handle(IPC_EVENTS.LLM_ANALYZE_LISTINGS, async (_event, listings) => {
 });
 
 // --- Listing Repo ---
-ipcMain.handle(IPC_EVENTS.LISTING_GET_SAVED, async () => {
-  return await ListingRepository.getSavedListings();
+ipcMain.handle(IPC_EVENTS.LISTING_GET_SAVED, () => {
+  return ListingRepository.getSavedListings();
 });
 
-ipcMain.handle(IPC_EVENTS.LISTING_GET_PENDING, async () => {
-  return await ListingRepository.getPendingListings();
+ipcMain.handle(IPC_EVENTS.LISTING_GET_PENDING, () => {
+  return ListingRepository.getPendingListings();
 });
 
-ipcMain.handle(IPC_EVENTS.LISTING_GET_DISCARDED, async () => {
-  return await ListingRepository.getDiscardedListings();
+ipcMain.handle(IPC_EVENTS.LISTING_GET_DISCARDED, () => {
+  return ListingRepository.getDiscardedListings();
 });
 
-ipcMain.handle(IPC_EVENTS.LISTING_CHANGE_STATUS, async (_event, listingId, status) => {
-  return await ListingRepository.updateListingStatus(listingId, status);
+ipcMain.handle(IPC_EVENTS.LISTING_CHANGE_STATUS, (_event, listingId, status) => {
+  return ListingRepository.updateListingStatus(listingId, status);
+});
+
+ipcMain.handle(IPC_EVENTS.LISTING_SAVE, (_event, listings) => {
+  return ListingRepository.saveListings(listings);
+});
+
+// --- Settings Repo ---
+ipcMain.handle(IPC_EVENTS.SETTINGS_GET_API_KEY, async () => {
+  return SettingsRepository.getApiKey();
+});
+
+ipcMain.handle(IPC_EVENTS.SETTINGS_SET_API_KEY, async (_event, apiKey) => {
+  return SettingsRepository.setApiKey(apiKey);
+});
+
+ipcMain.handle(IPC_EVENTS.SETTINGS_GET_LOCATION, async () => {
+  return SettingsRepository.getLocation();
+});
+
+ipcMain.handle(IPC_EVENTS.SETTINGS_SET_LOCATION, async (_event, latitude, longitude) => {
+  return SettingsRepository.setLocation(latitude, longitude);
 });

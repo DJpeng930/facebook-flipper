@@ -9,6 +9,7 @@ import AuthLoadingPage from "./pages/AuthLoadingPage";
 import PendingReviewPage from "./pages/PendingReviewPage";
 import SavedPage from "./pages/SavedPage";
 import DiscardedPage from "./pages/DiscardedPage";
+import SettingsPage from "./pages/SettingsPage";
 
 // Layout component with sidebar for most pages
 function SidebarLayout() {
@@ -62,6 +63,10 @@ const router = createBrowserRouter([
       {
         path: "discarded",
         Component: DiscardedPage
+      },
+      {
+        path: "settings",
+        Component: SettingsPage
       }
     ]
   },

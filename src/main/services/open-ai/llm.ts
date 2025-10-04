@@ -1,19 +1,8 @@
 import OpenAI from "openai";
-import { Listing, ListingValueAnalysis, RECOMMENDATIONS } from "../../../shared/types";
-
-// Extend ImportMetaEnv interface to include our custom environment variable
-declare global {
-  interface ImportMetaEnv {
-    MAIN_VITE_OPENAI_API_KEY: string;
-  }
-}
+import { Listing, ListingValueAnalysis, RECOMMENDATIONS, SerializableError } from "../../../shared/types";
+import { SettingsRepository } from "../repositories/settings-repository";
 
 export class LargeLanguageModel {
-  static openai = new OpenAI({
-    baseURL: "https://openrouter.ai/api/v1",
-    apiKey: import.meta.env.MAIN_VITE_OPENAI_API_KEY
-  });
-
   private static readonly model = "google/gemini-2.5-flash:online";
 
   private static readonly systemPrompt = `
@@ -91,13 +80,15 @@ Return your analysis as a structured JSON response with an array of listing anal
     }
   };
 
-  static async analyzeListings(listings: Listing[]): Promise<Listing[]> {
+  static async analyzeListings(listings: Listing[]): Promise<{ error?: SerializableError; listings: Listing[] }> {
+    console.log("Analyzing listings with LLM");
+
     if (listings.length === 0) {
-      return [];
+      return { listings: [] };
     }
 
     try {
-      const response = await this.openai.chat.completions.create({
+      const response = await this.createOpenAIClient().chat.completions.create({
         model: this.model,
         messages: [
           {
@@ -138,7 +129,7 @@ Return your analysis as a structured JSON response with an array of listing anal
         return listing;
       });
 
-      return listings;
+      return { listings };
     } catch (error) {
       console.error("Error generating or parsing analysis:", error);
 
@@ -147,7 +138,24 @@ Return your analysis as a structured JSON response with an array of listing anal
         console.error("Failed to parse JSON response");
       }
 
-      throw error;
+      // Serialize the error properly for IPC
+      const errorObj = error as Record<string, unknown>;
+      const serializedError: SerializableError = {
+        message: error instanceof Error ? error.message : String(error),
+        code: errorObj.code as number | string | undefined,
+        status: errorObj.status as number | undefined,
+        type: errorObj.type as string | undefined,
+        name: error instanceof Error ? error.name : "Error"
+      };
+
+      return { error: serializedError, listings: [] };
     }
+  }
+
+  private static createOpenAIClient() {
+    return new OpenAI({
+      baseURL: "https://openrouter.ai/api/v1",
+      apiKey: SettingsRepository.getApiKey()
+    });
   }
 }

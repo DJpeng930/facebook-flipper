@@ -4,6 +4,7 @@ import { Listing, SearchFilters } from "src/shared/types";
 import ListingCard from "@renderer/components/ListingCard";
 import { Search } from "lucide-react";
 import Header from "@renderer/components/Header";
+import { toast } from "sonner";
 
 export default function MarketplaceSearch() {
   const [listings, setListings] = useState<Listing[]>([]);
@@ -14,15 +15,28 @@ export default function MarketplaceSearch() {
     setIsLoading(true);
     setHasSearched(true);
 
-    const mockListings = await window.api.facebook.scrapeMarketListings(settings);
-    console.log("Listings received in renderer:", mockListings);
+    const listings = await window.api.facebook.scrapeMarketListings(settings);
 
-    setListings(mockListings);
+    const res = await window.api.llm.analyzeListings(listings);
+
+    if (res.error?.code === 401) {
+      toast.error(`Error: Unauthorized. Please check your API key in Settings.`);
+    } else if (res.error) {
+      toast.error(`Error analyzing listings: ${res.error.message}`);
+    } else {
+      await window.api.listingRepo.save(res.listings);
+      setListings(res.listings);
+    }
+
     setIsLoading(false);
   }
 
+  const handleButtonActionComplete = (listingId: string) => {
+    setListings((prevListings) => prevListings.filter((listing) => listing.id !== listingId));
+  };
+
   return (
-    <div className="min-h-screen ">
+    <div className="min-h-screen">
       <Header pageName="Marketplace Search" />
 
       <div className="pt-2  p-10">
@@ -50,7 +64,7 @@ export default function MarketplaceSearch() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {listings.map((listing) => (
-                <ListingCard key={listing.id} listing={listing} />
+                <ListingCard key={listing.id} listing={listing} showSaveButton showDiscardButton onButtonActionComplete={() => handleButtonActionComplete(listing.id)} />
               ))}
             </div>
           </div>

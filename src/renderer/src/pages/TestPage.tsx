@@ -1,5 +1,3 @@
-import AuthLoadingPage from "./AuthLoadingPage";
-
 export default function TestPage() {
-  return <AuthLoadingPage />;
+  return <div>Test Page</div>;
 }

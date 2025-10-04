@@ -67,9 +67,24 @@ export interface Listing {
     name: string;
     latitude: number;
     longitude: number;
-    radius: number;
+    distance: number | null;
   };
   ageString: string; // e.g., "2 days ago"
   age: number; // milliseconds since 1970
   valueAnalysis?: Omit<ListingValueAnalysis, "listingId">; // Optional field for value analysis
+}
+export interface AppSettings {
+  apiKey: string;
+  location: {
+    latitude: number;
+    longitude: number;
+  } | null;
+}
+
+export interface SerializableError {
+  message: string;
+  code?: number | string;
+  status?: number;
+  type?: string;
+  name: string;
 }

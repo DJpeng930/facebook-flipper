@@ -3,6 +3,7 @@ import { Search } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Listing } from "src/shared/types";
 import Header from "@renderer/components/Header";
+import { calculateListingsDistance } from "@renderer/lib/utils";
 
 export default function PendingReviewPage() {
   const [listings, setListings] = useState<Listing[]>([]);
@@ -11,7 +12,7 @@ export default function PendingReviewPage() {
   useEffect(() => {
     async function fetchPendingListings() {
       setIsLoading(true);
-      const pendingListings = await window.api.listingRepo.getPending();
+      const pendingListings = await calculateListingsDistance(await window.api.listingRepo.getPending());
       setListings(pendingListings);
       setIsLoading(false);
     }

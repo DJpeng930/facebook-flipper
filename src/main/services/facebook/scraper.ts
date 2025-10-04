@@ -13,8 +13,9 @@ export class FacebookScraper {
     listingPrice: "span.x193iq5w.xeuugli.x13faqbe.x1vvkbs.x1xmvt09.x1lliihq.x1s928wv.xhkezso.x1gmr53x.x1cpjm7i.x1fgarty.x1943h6x.xudqn12.x676frb.x1lkfr7t.x1lbecb7.xk50ysn.xzsf02u",
     listingDescription: "div.xz9dl7a.xyri2b.xsag5q8.x1c1uobl.x126k92a",
     listingLocation: "a span.x193iq5w.xeuugli.x13faqbe.x1vvkbs.x1xmvt09.x1nxh6w3.x1sibtaa.xo1l8bm.xi81zsa",
-    listingAge: "abbr span",
+    listingAge: "span abbr span",
     listingPhoto: "img",
+    listingMap: "div.x1n2onr6.xqtp20y.x6ikm8r.x10wlt62 div.x1o0tod.x10l6tqk.x13vifvy",
     noListingsFound: "h2"
   };
 
@@ -93,34 +94,34 @@ export class FacebookScraper {
       .text()
       .trim();
 
-    //Extract html jsons
-    const jsons = $('script[type="application/json"][data-processed="1"]');
+    //Extract location coordinates from map div style attr if available
+    const exactLocation = {
+      name: location,
+      latitude: 0,
+      longitude: 0,
+      distance: null
+    };
 
-    // Find the largest JSON script block as that one contains location data
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let dataJson: any = {};
-    let largestLength = 0;
-    jsons.each((i, element) => {
-      try {
-        const jsonText = $(element).text();
-        const parsed = JSON.parse(jsonText);
-        const length = JSON.stringify(parsed).length; // length of JSON string
+    const locationStyle = $(this.SELECTORS.listingMap).first().attr("style");
 
-        if (length > largestLength) {
-          largestLength = length;
-          dataJson = parsed;
+    if (locationStyle) {
+      // Extract the URL inside background-image
+      const urlMatch = locationStyle.match(/url\(([^)]+)\)/);
+      if (urlMatch) {
+        // Decode HTML entities (&amp;)
+        const url = urlMatch[1].replace(/&amp;/g, "&");
+
+        // Use URL API to parse query parameters
+        const params = new URL(url).searchParams;
+        const center = params.get("center");
+
+        if (center) {
+          const [lat, lng] = center.split(",").map(Number);
+          exactLocation.latitude = lat;
+          exactLocation.longitude = lng;
         }
-      } catch (err) {
-        console.error(`Error parsing JSON in script ${i}:`, err);
       }
-    });
-
-    const exactLocation: {
-      radius: number;
-      latitude: number;
-      longitude: number;
-      vanityPageId: string;
-    } = dataJson.require[0][3][0].__bbox.require[8][3][0].initialRouteInfo.route.rootView.props.location;
+    }
 
     if (!isExternalContext) await context!.close();
 
@@ -132,12 +133,7 @@ export class FacebookScraper {
       currency: price.replace(/[0-9.,\s]/g, "") || "Unknown",
       price: parseFloat(price.replace(/[^0-9.-]+/g, "")) || 0,
       imageUrl: photo || "https://support.heberjahiz.com/hc/article_attachments/21013076295570",
-      location: {
-        name: location,
-        latitude: exactLocation.latitude,
-        longitude: exactLocation.longitude,
-        radius: exactLocation.radius
-      },
+      location: exactLocation,
       age: 0,
       status: "pending"
     };
@@ -192,7 +188,8 @@ export class FacebookScraper {
       const elements = listingsDivParent.children("div").toArray();
       for (const element of elements) {
         const listingId = this.extractListingIdFromCard(element);
-        const listingInRepo = listingId ? await ListingRepository.getListingById(listingId) : null;
+
+        const listingInRepo = listingId ? ListingRepository.getListingById(listingId) : null;
         //If listingId is valid and not already in repo or on previous batch
         if (listingId && listingInRepo === null) {
           uniqueListingIds.add(listingId);

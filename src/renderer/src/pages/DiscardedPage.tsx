@@ -3,6 +3,7 @@ import { Search } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Listing } from "src/shared/types";
 import Header from "@renderer/components/Header";
+import { calculateListingsDistance } from "@renderer/lib/utils";
 
 export default function DiscardedPage() {
   const [listings, setListings] = useState<Listing[]>([]);
@@ -11,7 +12,7 @@ export default function DiscardedPage() {
   useEffect(() => {
     async function fetchDiscardedListings() {
       setIsLoading(true);
-      const discardedListings = await window.api.listingRepo.getDiscarded();
+      const discardedListings = await calculateListingsDistance(await window.api.listingRepo.getDiscarded());
       setListings(discardedListings);
       setIsLoading(false);
     }
