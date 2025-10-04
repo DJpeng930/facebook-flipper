@@ -1,9 +1,11 @@
 import * as cheerio from "cheerio";
 import { PlaywrightManager } from "../browser/playwright";
 import type { Element } from "domhandler";
-import { Listing, SearchFilters } from "../../../shared/types";
+import { Listing, ScraperProgress, SearchFilters } from "../../../shared/types";
 import type { BrowserContext } from "playwright";
 import { ListingRepository } from "../repositories/listing-repository";
+import { mainWindow } from "../..";
+import { IPC_EVENTS } from "../../../shared/ipc-events";
 
 export class FacebookScraper {
   private static readonly SELECTORS = {
@@ -49,6 +51,15 @@ export class FacebookScraper {
           console.log(`Extracting data for listing ID: ${id}`);
           const listingData = await this.extractListingDataFromPage(id, context);
           listings.push(listingData);
+
+          this.sendScrapeProgress({
+            phase: "extracting",
+            listingsToExtract: listingIds.length,
+            listingsExtracted: listings.length,
+            message: `Extracting listing ${listings.length} of ${listingIds.length}`,
+            percentage: Math.round((listings.length / listingIds.length) * 100)
+          });
+
           console.log(`Extracted ${listings.length}/${listingIds.length} listings.`);
         })
       );
@@ -154,6 +165,12 @@ export class FacebookScraper {
    * @throws May throw errors if browser automation fails or if the page structure changes
    */
   private static async extractListingIds(settings: SearchFilters): Promise<string[]> {
+    // Send initial progress
+    this.sendScrapeProgress({
+      phase: "starting",
+      message: `Launching Facebook Marketplace...`
+    });
+
     const context = await PlaywrightManager.createFacebookContext();
     const page = await context.newPage();
     await page.goto(this.generateSearchUrl(settings));
@@ -161,7 +178,16 @@ export class FacebookScraper {
     let listingsDivParent: cheerio.Cheerio<Element>;
     const uniqueListingIds = new Set<string>();
     let numScrolls = 0;
-    const maxScrolls = settings.maxScrolls || 5;
+    const maxScrolls = settings.maxScrolls || 10; // Default max scrolls if not provided
+
+    // Send initial progress
+    this.sendScrapeProgress({
+      phase: "scrolling",
+      message: `Starting to scroll through marketplace...`,
+      currentScroll: 0,
+      maxScrolls: maxScrolls,
+      percentage: 0
+    });
 
     while (uniqueListingIds.size < settings.numListings && numScrolls < maxScrolls) {
       const newContent = await page.content();
@@ -175,6 +201,16 @@ export class FacebookScraper {
 
       console.log("Scrolling to load more listings...");
       numScrolls++;
+
+      // Send progress for scrolling
+      this.sendScrapeProgress({
+        phase: "scrolling",
+        message: `Scrolling through marketplace...`,
+        currentScroll: numScrolls,
+        maxScrolls: maxScrolls,
+        percentage: Math.round((uniqueListingIds.size / settings.numListings) * 100)
+      });
+
       await page.evaluate(() => {
         window.scrollBy(0, window.innerHeight * 2);
       });
@@ -197,6 +233,17 @@ export class FacebookScraper {
       }
 
       console.log("Current number of unique listings found:", uniqueListingIds.size);
+
+      // Send progress after finding IDs
+      this.sendScrapeProgress({
+        phase: "scrolling",
+        listingsToExtract: settings.numListings,
+        listingsExtracted: uniqueListingIds.size,
+        message: `Found ${uniqueListingIds.size} unique listing${uniqueListingIds.size !== 1 ? "s" : ""}`,
+        currentScroll: numScrolls,
+        maxScrolls: maxScrolls,
+        percentage: Math.round((uniqueListingIds.size / settings.numListings) * 100)
+      });
     }
 
     // Clean up
@@ -204,6 +251,15 @@ export class FacebookScraper {
 
     const finalListings = Array.from(uniqueListingIds).slice(0, settings.numListings);
     console.log(`Extracted ${finalListings.length} unique listing IDs.`);
+
+    // Send final progress for ID extraction phase
+    this.sendScrapeProgress({
+      phase: "extracting",
+      listingsToExtract: finalListings.length,
+      listingsExtracted: 0,
+      message: `Starting data extraction for ${finalListings.length} listing${finalListings.length !== 1 ? "s" : ""}...`,
+      percentage: 0
+    });
 
     return finalListings;
   }
@@ -289,5 +345,19 @@ export class FacebookScraper {
         .replace("×", "x") // Multiplication sign
         .trim()
     );
+  }
+
+  private static async sendScrapeProgress(progress: Partial<ScraperProgress>) {
+    const defaultProgress: ScraperProgress = {
+      phase: "starting",
+      listingsToExtract: 0,
+      listingsExtracted: 0,
+      message: "Initializing scraper...",
+      percentage: 0,
+      currentScroll: 0,
+      maxScrolls: 0
+    };
+
+    mainWindow?.webContents.send(IPC_EVENTS.FB_ON_SCRAPE_PROGRESS, { ...defaultProgress, ...progress });
   }
 }

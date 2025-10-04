@@ -88,3 +88,13 @@ export interface SerializableError {
   type?: string;
   name: string;
 }
+
+export interface ScraperProgress {
+  phase: "starting" | "scrolling" | "extracting";
+  listingsToExtract: number; // Total listings to extract
+  listingsExtracted: number; // Number of listings extracted so far
+  message: string; // Status message to display
+  currentScroll?: number; // Current scroll number (for scrolling phase)
+  maxScrolls?: number; // Maximum scrolls (for scrolling phase)
+  percentage: number; // Overall percentage (0-100)
+}

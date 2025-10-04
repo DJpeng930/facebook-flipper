@@ -1,5 +1,5 @@
 import { ElectronAPI } from "@electron-toolkit/preload";
-import type { Listing, ListingStatus, SearchFilters, User, SerializableError } from "../shared/types";
+import type { Listing, ListingStatus, SearchFilters, User, SerializableError, ScraperProgress } from "../shared/types";
 
 export interface Api {
   facebook: {
@@ -7,6 +7,7 @@ export interface Api {
     checkSession: () => Promise<User | null>;
     logout: () => Promise<boolean>;
     scrapeMarketListings: (settings: SearchFilters) => Promise<Omit<Listing, "valueAnalysis">[]>;
+    onScrapeProgress: (callback: (progress: ScraperProgress) => void) => () => void;
   };
 
   llm: {

@@ -2,6 +2,7 @@ import { contextBridge, ipcRenderer } from "electron";
 import { electronAPI } from "@electron-toolkit/preload";
 import { IPC_EVENTS } from "../shared/ipc-events";
 import type { Api } from "./index.d";
+import type { ScraperProgress } from "../shared/types";
 
 // Custom APIs for renderer
 const api: Api = {
@@ -9,7 +10,12 @@ const api: Api = {
     openLogin: () => ipcRenderer.invoke(IPC_EVENTS.FB_OPEN_LOGIN),
     checkSession: () => ipcRenderer.invoke(IPC_EVENTS.FB_CHECK_SESSION),
     logout: () => ipcRenderer.invoke(IPC_EVENTS.FB_LOG_OUT),
-    scrapeMarketListings: (settings) => ipcRenderer.invoke(IPC_EVENTS.FB_SCRAPE_MARKET_LISTINGS, settings)
+    scrapeMarketListings: (settings) => ipcRenderer.invoke(IPC_EVENTS.FB_SCRAPE_MARKET_LISTINGS, settings),
+    onScrapeProgress: (callback) => {
+      const listener = (_event: Electron.IpcRendererEvent, progress: ScraperProgress) => callback(progress);
+      ipcRenderer.on(IPC_EVENTS.FB_ON_SCRAPE_PROGRESS, listener);
+      return () => ipcRenderer.removeListener(IPC_EVENTS.FB_ON_SCRAPE_PROGRESS, listener);
+    }
   },
   llm: {
     analyzeListings: (listings) => ipcRenderer.invoke(IPC_EVENTS.LLM_ANALYZE_LISTINGS, listings)
