@@ -24,13 +24,13 @@ export default function ListingCard({ listing, showDiscardButton = false, showSa
   return (
     <Card className="hover:shadow-md transition-all duration-300 p-0 gap-0 overflow-hidden  border-1  h-full flex flex-col">
       <CardHeader className="p-0 relative">
-        <img src={listing.imageUrl} alt={listing.title} className="w-full h-40 object-cover" />
+        <img src={listing.imageUrl} alt={listing.title} className="w-full h-40 object-cover" loading="lazy" />
       </CardHeader>
       <CardContent className="p-3 flex-1 flex flex-col">
         <div className="space-y-2 flex-1 flex flex-col">
           {/* Title and Price */}
           <div className="space-y-1">
-            <a href={`https://www.facebook.com/marketplace/item/${listing.id}/`} target="_blank" rel="noopener noreferrer">
+            <a href={`https://www.facebook.com/marketplace/item/${listing.id}/`} target="_blank" rel="noopener noreferrer" className="hover:underline">
               <CardTitle className="text-base line-clamp-2 leading-tight text-gray-900 h-10 flex items-start">{listing.title}</CardTitle>
             </a>
             <div className="text-xl font-bold text-primary">${listing.price.toLocaleString()}</div>

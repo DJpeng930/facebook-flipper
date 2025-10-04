@@ -6,6 +6,8 @@ import Header from "@renderer/components/Header";
 import { calculateListingsDistance } from "@renderer/lib/utils";
 import FilterBar from "@renderer/components/FilterBar";
 import { useListingFilters } from "@renderer/hooks/useListingFilters";
+import { usePagination } from "@renderer/hooks/usePagination";
+import Pagination from "@renderer/components/Pagination";
 
 export default function DiscardedPage() {
   const [listings, setListings] = useState<Listing[]>([]);
@@ -14,11 +16,19 @@ export default function DiscardedPage() {
   // Use the custom hook for filtering and sorting
   const { searchQuery, setSearchQuery, sortBy, setSortBy, filteredListings } = useListingFilters(listings);
 
+  // Use pagination hook
+  const { currentPage, totalPages, paginatedItems, goToNextPage, goToPreviousPage, hasNextPage, hasPreviousPage } = usePagination({
+    items: filteredListings,
+
+    resetDependencies: [searchQuery, sortBy]
+  });
+
   useEffect(() => {
     async function fetchDiscardedListings() {
       setIsLoading(true);
-      const discardedListings = await calculateListingsDistance(await window.api.listingRepo.getDiscarded());
-      setListings(discardedListings);
+      const discardedListings = await window.api.listingRepo.getDiscarded();
+      const listingsWithDistance = await calculateListingsDistance(discardedListings);
+      setListings(listingsWithDistance);
       setIsLoading(false);
     }
 
@@ -27,7 +37,8 @@ export default function DiscardedPage() {
 
   async function onListingActionComplete() {
     const discardedListings = await window.api.listingRepo.getDiscarded();
-    setListings(discardedListings);
+    const listingsWithDistance = await calculateListingsDistance(discardedListings);
+    setListings(listingsWithDistance);
   }
 
   return (
@@ -60,10 +71,12 @@ export default function DiscardedPage() {
         {!isLoading && filteredListings.length > 0 && (
           <div className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {filteredListings.map((listing) => (
+              {paginatedItems.map((listing) => (
                 <ListingCard key={listing.id} listing={listing} showSaveButton onButtonActionComplete={onListingActionComplete} />
               ))}
             </div>
+
+            <Pagination currentPage={currentPage} totalPages={totalPages} onNextPage={goToNextPage} onPreviousPage={goToPreviousPage} hasNextPage={hasNextPage} hasPreviousPage={hasPreviousPage} />
           </div>
         )}
 

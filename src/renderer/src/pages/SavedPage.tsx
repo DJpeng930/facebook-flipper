@@ -6,6 +6,8 @@ import Header from "@renderer/components/Header";
 import { calculateListingsDistance } from "@renderer/lib/utils";
 import FilterBar from "@renderer/components/FilterBar";
 import { useListingFilters } from "@renderer/hooks/useListingFilters";
+import { usePagination } from "@renderer/hooks/usePagination";
+import Pagination from "@renderer/components/Pagination";
 
 export default function SavedPage() {
   const [listings, setListings] = useState<Listing[]>([]);
@@ -14,14 +16,21 @@ export default function SavedPage() {
   // Use the custom hook for filtering and sorting
   const { searchQuery, setSearchQuery, sortBy, setSortBy, filteredListings } = useListingFilters(listings);
 
+  // Use pagination hook
+  const { currentPage, totalPages, paginatedItems, goToNextPage, goToPreviousPage, hasNextPage, hasPreviousPage } = usePagination({
+    items: filteredListings,
+    resetDependencies: [searchQuery, sortBy]
+  });
+
   useEffect(() => {
     async function fetchSavedListings() {
       setIsLoading(true);
-      const savedListings = await calculateListingsDistance(await window.api.listingRepo.getSaved());
+      const savedListings = await window.api.listingRepo.getSaved();
+      const listingsWithDistance = await calculateListingsDistance(savedListings);
 
-      console.log("Saved listings:", savedListings);
+      console.log("Saved listings:", listingsWithDistance);
 
-      setListings(savedListings);
+      setListings(listingsWithDistance);
       setIsLoading(false);
     }
 
@@ -30,7 +39,8 @@ export default function SavedPage() {
 
   async function onListingActionComplete() {
     const savedListings = await window.api.listingRepo.getSaved();
-    setListings(savedListings);
+    const listingsWithDistance = await calculateListingsDistance(savedListings);
+    setListings(listingsWithDistance);
   }
 
   return (
@@ -63,10 +73,12 @@ export default function SavedPage() {
         {!isLoading && filteredListings.length > 0 && (
           <div className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {filteredListings.map((listing) => (
+              {paginatedItems.map((listing) => (
                 <ListingCard key={listing.id} listing={listing} showDiscardButton onButtonActionComplete={onListingActionComplete} />
               ))}
             </div>
+
+            <Pagination currentPage={currentPage} totalPages={totalPages} onNextPage={goToNextPage} onPreviousPage={goToPreviousPage} hasNextPage={hasNextPage} hasPreviousPage={hasPreviousPage} />
           </div>
         )}
 

@@ -12,7 +12,7 @@ export class FacebookScraper {
     listingLink: "div.x3ct3a4 a",
     listingDivParent: "div.x8gbvx8.x78zum5.x1q0g3np.x1a02dak.x1nhvcw1.x1rdy4ex.x1lxpwgx.x4vbgl9.x165d6jo",
     listingTitle: "div.xyamay9.xv54qhq.x18d9i69.xf7dkkf h1",
-    listingPrice: "span.x193iq5w.xeuugli.x13faqbe.x1vvkbs.x1xmvt09.x1lliihq.x1s928wv.xhkezso.x1gmr53x.x1cpjm7i.x1fgarty.x1943h6x.xudqn12.x676frb.x1lkfr7t.x1lbecb7.xk50ysn.xzsf02u",
+    listingPrice: "div.x1xmf6yo div[aria-hidden='false'] span",
     listingDescription: "div.xz9dl7a.xyri2b.xsag5q8.x1c1uobl.x126k92a",
     listingLocation: "a span.x193iq5w.xeuugli.x13faqbe.x1vvkbs.x1xmvt09.x1nxh6w3.x1sibtaa.xo1l8bm.xi81zsa",
     listingAge: "span abbr span",
@@ -98,9 +98,10 @@ export class FacebookScraper {
     const photo = $(this.SELECTORS.listingPhoto).first().attr("src");
 
     const price = $(this.SELECTORS.listingPrice)
+      .first()
       .contents()
       .filter(function () {
-        return this.nodeType === 3; // Text nodes only
+        return this.type === "text"; // only direct text nodes
       })
       .text()
       .trim();
