@@ -245,6 +245,10 @@ export class FacebookScraper {
         // Re-select the listings parent div after loading more content
         listingsDivParent = $(this.SELECTORS.listingDivParent) as cheerio.Cheerio<Element>;
 
+        if (listingsDivParent.length === 0) {
+          throw new Error("Could not find listings container on FB market page. (SELECTORS.listingDivParent)");
+        }
+
         // Select each child listing div and add to set
         const elements = listingsDivParent.children("div").toArray();
         for (const element of elements) {
@@ -346,7 +350,6 @@ export class FacebookScraper {
     const $card = cheerio.load(card);
 
     const link = $card(this.SELECTORS.listingLink).attr("href");
-
     if (!link) return null;
 
     const idMatch = link?.match(/\/item\/(\d+)\//);
