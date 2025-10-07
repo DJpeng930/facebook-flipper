@@ -33,7 +33,10 @@ export default function ListingCard({ listing, showDiscardButton = false, showSa
             <a href={`https://www.facebook.com/marketplace/item/${listing.id}/`} target="_blank" rel="noopener noreferrer" className="hover:underline">
               <CardTitle className="text-base line-clamp-2 leading-tight text-gray-900 h-10 flex items-start">{listing.title}</CardTitle>
             </a>
-            <div className="text-xl font-bold text-primary">${listing.price.toLocaleString()}</div>
+            <div className="text-xl font-bold text-primary">
+              {listing.currency}
+              {listing.price.toLocaleString()}
+            </div>
           </div>
 
           {/* Deal Score and Status - Combined */}

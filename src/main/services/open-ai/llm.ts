@@ -1,82 +1,93 @@
 import OpenAI from "openai";
 import { Listing, ListingValueAnalysis, RECOMMENDATIONS, SerializableError } from "../../../shared/types";
 import { SettingsRepository } from "../repositories/settings-repository";
+import { ResponseFormatJSONSchema } from "openai/resources/shared";
+
+type ResponseFormat = {
+  [key in keyof ListingValueAnalysis]: {
+    type: string;
+    description: string;
+    enum?: string[];
+    minimum?: number;
+    maximum?: number;
+  };
+};
 
 export class LargeLanguageModel {
   private static readonly model = "google/gemini-2.5-flash:online";
 
   private static readonly systemPrompt = `
-  You are an expert at identifying profitable resale opportunities on Facebook Marketplace. Your job is to analyze listings and determine if they're worth pursuing for flipping.
+  You are an expert marketplace analyst specializing in identifying profitable resale opportunities on Facebook Marketplace. Analyze the provided listings and evaluate their flip potential based on market dynamics, profit margins, and risk factors.
 
-EVALUATION CRITERIA:
+## HIGH-VALUE CATEGORIES (Priority Order)
 
-High-value categories to prioritize:
-- Electronics (phones, laptops, gaming, audio equipment)
-- Power tools and equipment
-- Designer clothing/accessories
-- Collectibles (vintage, sports cards, etc.)
-- Exercise equipment
-- Small appliances in good condition
+**Tier 1 - Best ROI:**
+- Electronics: Latest-gen phones, MacBooks, gaming consoles/PCs, high-end audio (Bose, Sony, AirPods)
+- Power tools: Makita, DeWalt, Milwaukee, Bosch professional lines
+- Designer items: Authenticated luxury bags, watches, streetwear (Supreme, Yeezy)
 
-Red flags to avoid:
-- "For parts" or "broken" items (unless you repair)
-- IKEA/cheap furniture
-- Items with missing pieces
-- Vague descriptions with poor titles
-- Items that are hard to ship
-- Time since listed (older = less likely to sell or not a great deal)
+**Tier 2 - Solid Returns:**
+- Collectibles: Sealed vintage items, graded sports cards, limited editions
+- Exercise equipment: Peloton, Bowflex, free weights, resistance bands
+- Small appliances: KitchenAid, Dyson, Vitamix, espresso machines
 
-Pricing signals:
-- Compare to typical retail/used prices
-- Consider shipping costs and fees (eBay ~13%, FB/local ~0%)
-- Factor in time investment
-- Look for urgent sale indicators ("moving", "need gone")
+**Tier 3 - Selective Picks:**
+- Furniture: Only mid-century modern, designer pieces, or solid wood antiques
+- Musical instruments: Fender, Gibson, Roland, established brands only
 
-ANALYSIS REQUIREMENTS:
+## RED FLAGS (Auto-disqualify unless compelling reason)
 
-For each listing provided, analyze and provide:
+**Condition Issues:**
+- "For parts," "broken," "not working," "as-is" (unless you have repair expertise)
+- Missing components, accessories, or original packaging (especially electronics)
+- Water damage, cracks, heavy wear, or stains
 
-listingId: string; // Unique identifier for the listing
-estResaleValue: number; // Estimated resale value based on market research
-potentialProfit: number; // Potential profit after resale (estResaleValue - askingPrice - fees)
-roi: string; // Return on investment percentage
-dealScore: number; // Score from 1-10 on how good of a deal this is
-recommendation: "AVOID" | "LOW_POTENTIAL" | "CONSIDER" | "STRONG_BUY"; // Overall recommendation
+**Marketplace Signals:**
+- Listed 7+ days ago (indicates overpricing or low demand)
+- Vague titles like "stuff for sale" or minimal description
+- Prioritize recent listings as those ones are usually the good deals that get taken fast
 
-Return your analysis as a structured JSON response with an array of listing analyses.`;
 
-  // Schema to match ListingValueAnalysis interface
-  private static readonly response_format = {
-    type: "json_schema" as const,
-    json_schema: {
-      name: "listings_analysis",
-      strict: true,
-      schema: {
-        type: "object",
-        properties: {
-          analyses: {
-            type: "array",
-            items: {
-              type: "object",
-              properties: {
-                listingId: { type: "string" },
-                estResaleValue: { type: "number" },
-                potentialProfit: { type: "number" },
-                roi: { type: "string" },
-                dealScore: { type: "integer", minimum: 1, maximum: 10 },
-                recommendation: {
-                  type: "string",
-                  enum: RECOMMENDATIONS
-                }
-              },
-              required: ["listingId", "estResaleValue", "potentialProfit", "roi", "dealScore", "recommendation"],
-              additionalProperties: false
-            }
-          }
-        },
-        required: ["analyses"],
-        additionalProperties: false
-      }
+## PRICING ANALYSIS FRAMEWORK
+
+**Market Research:**
+- Check recent eBay sold listings (filter last 30 days)
+- Compare to current eBay/Poshmark/Mercari active listings
+- Factor in seasonal demand fluctuations
+
+**Cost Calculations:**
+- eBay fees: 13.25% (12.9% final value + ~$0.30 transaction)
+- PayPal/payment processing: 2.9% + $0.30 (if applicable)
+- Shipping costs: Estimate based on weight/dimensions
+- Local sale: 0% fees but factor in gas/time
+- Cleaning, testing, or minor repair costs
+
+**Profit Thresholds:**
+- Minimum target: 40% ROI after all costs
+- Ideal target: 100%+ ROI
+- Time investment: Profit should justify >$25/hour equivalent
+
+**Urgency Indicators (Negotiate Lower):**
+- Keywords: "moving," "need gone ASAP," "must sell today"
+- Seller accepts "best offer"
+- Posted within last 24 hours (motivated seller)
+
+
+Return your analysis as a structured JSON response with an array of listing analyses.
+OUTPUT FORMAT:
+Return your analysis as a JSON array with the following structure:
+`;
+
+  private static readonly responseFormat: ResponseFormat = {
+    listingId: { type: "string", description: "Unique identifier for the listing" },
+    estResaleValue: { type: "number", description: "Estimated resale value based on market research" },
+    potentialProfit: { type: "number", description: "Potential profit after resale (estResaleValue - askingPrice - fees)" },
+    roi: { type: "string", description: "Return on investment percentage" },
+    dealScore: { type: "integer", minimum: 1, maximum: 10, description: "Score from 1-10 on how good of a deal this is" },
+    recommendation: {
+      type: "string",
+      description: "Overall recommendation",
+      enum: [...RECOMMENDATIONS]
     }
   };
 
@@ -93,14 +104,14 @@ Return your analysis as a structured JSON response with an array of listing anal
         messages: [
           {
             role: "system",
-            content: this.systemPrompt
+            content: `${this.systemPrompt}\n${this.responseFormat}`
           },
           {
             role: "user",
-            content: `Here are all the listings you need to analyze: ${JSON.stringify(listings)}`
+            content: `Here are all the listings you need to analyze: ${this.parseListings(listings)}`
           }
         ],
-        response_format: this.response_format
+        response_format: this.getResponseFormat()
       });
 
       const content = response.choices[0].message?.content;
@@ -152,10 +163,52 @@ Return your analysis as a structured JSON response with an array of listing anal
     }
   }
 
+  private static parseListings(listings: Listing[]): string {
+    return listings
+      .map(
+        (listing) => `
+        Listing ID: ${listing.id}
+        Title: ${listing.title}
+        Time Since Listed: ${listing.ageString || "N/A"}}
+        Price: ${listing.currency + listing.price}
+        Description:\n ${listing.description || "N/A"}
+        `
+      )
+      .join("\n---\n");
+  }
+
   private static createOpenAIClient() {
     return new OpenAI({
       baseURL: "https://openrouter.ai/api/v1",
       apiKey: SettingsRepository.getApiKey()
     });
+  }
+
+  private static getResponseFormat(): ResponseFormatJSONSchema {
+    const requiredFields = Object.keys(this.responseFormat);
+
+    return {
+      type: "json_schema" as const,
+      json_schema: {
+        name: "listings_analysis",
+        strict: true,
+        schema: {
+          type: "object",
+          properties: {
+            analyses: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: this.responseFormat,
+                required: requiredFields,
+                additionalProperties: false
+              }
+            }
+          },
+          required: ["analyses"],
+          additionalProperties: false
+        }
+      }
+    };
   }
 }
