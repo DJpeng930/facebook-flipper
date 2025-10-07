@@ -5,7 +5,7 @@ interface UserContextType {
   user: User | null;
   login: () => Promise<boolean>;
   logout: () => void;
-  refreshSession: () => void;
+  refreshSession: () => Promise<User | null>;
   loading: boolean;
 }
 
@@ -91,6 +91,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
 
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(user));
     setUser(user);
+    return user;
   }
 
   const value: UserContextType = {

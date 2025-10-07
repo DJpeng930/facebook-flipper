@@ -92,11 +92,12 @@ Return your analysis as a JSON array with the following structure:
   };
 
   static async analyzeListings(listings: Listing[]): Promise<{ error?: SerializableError; listings: Listing[] }> {
-    console.log("Analyzing listings with LLM");
-
     if (listings.length === 0) {
+      console.log("No listings to analyze with LLM");
       return { listings: [] };
     }
+
+    console.log("Analyzing listings with LLM");
 
     try {
       const response = await this.createOpenAIClient().chat.completions.create({

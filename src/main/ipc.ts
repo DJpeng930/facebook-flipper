@@ -5,6 +5,7 @@ import { FacebookScraper } from "./services/facebook/scraper";
 import { LargeLanguageModel } from "./services/open-ai/llm";
 import { ListingRepository } from "./services/repositories/listing-repository";
 import { SettingsRepository } from "./services/repositories/settings-repository";
+import { PlaywrightManager } from "./services/browser/playwright";
 
 // --- Facebook ---
 ipcMain.handle(IPC_EVENTS.FB_OPEN_LOGIN, async () => {
@@ -21,6 +22,10 @@ ipcMain.handle(IPC_EVENTS.FB_LOG_OUT, async () => {
 
 ipcMain.handle(IPC_EVENTS.FB_SCRAPE_MARKET_LISTINGS, async (_event, settings) => {
   return await FacebookScraper.getMarketplaceListings(settings);
+});
+
+ipcMain.handle(IPC_EVENTS.FB_OPEN_BROWSER, () => {
+  PlaywrightManager.openBrowserWithFacebookContext();
 });
 
 // --- LLM ---
@@ -42,7 +47,7 @@ ipcMain.handle(IPC_EVENTS.LISTING_GET_DISCARDED, () => {
 });
 
 ipcMain.handle(IPC_EVENTS.LISTING_CHANGE_STATUS, (_event, listingId, status) => {
-  return ListingRepository.updateListingStatus(listingId, status);
+  ListingRepository.updateListingStatus(listingId, status);
 });
 
 ipcMain.handle(IPC_EVENTS.LISTING_SAVE, (_event, listings) => {

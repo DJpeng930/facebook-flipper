@@ -2,6 +2,7 @@ import { createContext, useContext, useState, ReactNode } from "react";
 import { Listing, SearchFilters, ScraperProgress } from "src/shared/types";
 import { toast } from "sonner";
 import { calculateListingsDistance } from "@renderer/lib/utils";
+import { useUser } from "./UserContext";
 
 interface SearchContextType {
   listings: Listing[];
@@ -19,6 +20,7 @@ interface SearchContextType {
 const SearchContext = createContext<SearchContextType | undefined>(undefined);
 
 export function SearchProvider({ children }: { children: ReactNode }) {
+  const { refreshSession } = useUser();
   const [listings, setListings] = useState<Listing[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
@@ -28,6 +30,14 @@ export function SearchProvider({ children }: { children: ReactNode }) {
 
   async function executeSearch(settings: SearchFilters) {
     setIsLoading(true);
+
+    const user = await refreshSession();
+    if (!user) {
+      toast.error("Facebook session not found or expired, log in again.", { duration: 10000 });
+      setIsLoading(false);
+      return;
+    }
+
     setHasSearched(true);
     setScraperProgress(null);
 

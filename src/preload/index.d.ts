@@ -8,6 +8,7 @@ export interface Api {
     logout: () => Promise<boolean>;
     scrapeMarketListings: (settings: SearchFilters) => Promise<Omit<Listing, "valueAnalysis">[]>;
     onScrapeProgress: (callback: (progress: ScraperProgress) => void) => () => void;
+    openBrowser: () => Promise<void>;
   };
 
   llm: {

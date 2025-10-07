@@ -2,7 +2,7 @@ import * as cheerio from "cheerio";
 import { PlaywrightManager } from "../browser/playwright";
 import type { Element } from "domhandler";
 import { Listing, ScraperProgress, SearchFilters } from "../../../shared/types";
-import type { BrowserContext } from "playwright";
+import type { BrowserContext } from "patchright";
 import { ListingRepository } from "../repositories/listing-repository";
 import { mainWindow } from "../..";
 import { IPC_EVENTS } from "../../../shared/ipc-events";
@@ -39,34 +39,47 @@ export class FacebookScraper {
     const listings: Listing[] = [];
     const batchSize = 10; // Number of listings to process in parallel
 
-    const context = await PlaywrightManager.createFacebookContext();
+    let context: BrowserContext | undefined;
 
-    for (let i = 0; i < listingIds.length; i += batchSize) {
-      const batch = listingIds.slice(i, i + batchSize);
+    try {
+      context = await PlaywrightManager.createFacebookContext();
 
-      console.log(`Processing batch of ${batch.length} listings...`);
+      for (let i = 0; i < listingIds.length; i += batchSize) {
+        const batch = listingIds.slice(i, i + batchSize);
 
-      await Promise.all(
-        batch.map(async (id) => {
-          console.log(`Extracting data for listing ID: ${id}`);
-          const listingData = await this.extractListingDataFromPage(id, context);
-          listings.push(listingData);
+        console.log(`Processing batch of ${batch.length} listings...`);
 
-          this.sendScrapeProgress({
-            phase: "extracting",
-            listingsToExtract: listingIds.length,
-            listingsExtracted: listings.length,
-            message: `Extracting listing ${listings.length} of ${listingIds.length}`,
-            percentage: Math.round((listings.length / listingIds.length) * 100)
-          });
+        await Promise.all(
+          batch.map(async (id) => {
+            //Log status
+            console.log(`Extracting data for listing ID: ${id}`);
 
-          console.log(`Extracted ${listings.length}/${listingIds.length} listings.`);
-        })
-      );
+            try {
+              //extract data from page
+              const listingData = await this.extractListingDataFromPage(id, context);
+              listings.push(listingData);
+              console.log(`Extracted ${listings.length}/${listingIds.length} listings.`);
+              this.sendScrapeProgress({
+                phase: "extracting",
+                listingsToExtract: listingIds.length,
+                listingsExtracted: listings.length,
+                message: `Extracting listing ${listings.length} of ${listingIds.length}`,
+                percentage: Math.round((listings.length / listingIds.length) * 100)
+              });
+            } catch (error) {
+              console.error(`Error extracting listing with id ${id}:`, error);
+            }
+          })
+        );
+      }
+
+      return listings;
+    } catch (error) {
+      console.error("Error retrieving marketplace listings:", error);
+      throw error;
+    } finally {
+      if (context) await context.close();
     }
-    await context.close();
-
-    return listings;
   }
 
   /**
@@ -82,73 +95,79 @@ export class FacebookScraper {
    */
   private static async extractListingDataFromPage(id: string, context?: BrowserContext): Promise<Listing> {
     const isExternalContext = context !== undefined;
-    if (!isExternalContext) context = await PlaywrightManager.createFacebookContext();
 
-    const page = await context!.newPage();
+    try {
+      if (!isExternalContext) context = await PlaywrightManager.createFacebookContext();
 
-    await page.goto(`https://www.facebook.com/marketplace/item/${id}`);
-    const content = await page.content();
-    const $ = cheerio.load(content);
+      const page = await context!.newPage();
 
-    // Extract basic fields
-    const title = $(this.SELECTORS.listingTitle).text().trim();
-    const description = $(this.SELECTORS.listingDescription).text().trim();
-    const location = $(this.SELECTORS.listingLocation).first().text().trim();
-    const age = $(this.SELECTORS.listingAge).text();
-    const photo = $(this.SELECTORS.listingPhoto).first().attr("src");
+      await page.goto(`https://www.facebook.com/marketplace/item/${id}`, { timeout: 120000 });
+      const content = await page.content();
+      const $ = cheerio.load(content);
 
-    const price = $(this.SELECTORS.listingPrice)
-      .first()
-      .contents()
-      .filter(function () {
-        return this.type === "text"; // only direct text nodes
-      })
-      .text()
-      .trim();
+      // Extract basic fields
+      const title = $(this.SELECTORS.listingTitle).text().trim();
+      const description = $(this.SELECTORS.listingDescription).text().trim();
+      const location = $(this.SELECTORS.listingLocation).first().text().trim();
+      const age = $(this.SELECTORS.listingAge).text();
+      const photo = $(this.SELECTORS.listingPhoto).first().attr("src");
 
-    //Extract location coordinates from map div style attr if available
-    const exactLocation = {
-      name: location,
-      latitude: 0,
-      longitude: 0,
-      distance: null
-    };
+      const price = $(this.SELECTORS.listingPrice)
+        .first()
+        .contents()
+        .filter(function () {
+          return this.type === "text"; // only direct text nodes
+        })
+        .text()
+        .trim();
 
-    const locationStyle = $(this.SELECTORS.listingMap).first().attr("style");
+      //Extract location coordinates from map div style attr if available
+      const exactLocation = {
+        name: location,
+        latitude: 0,
+        longitude: 0,
+        distance: null
+      };
 
-    if (locationStyle) {
-      // Extract the URL inside background-image
-      const urlMatch = locationStyle.match(/url\(([^)]+)\)/);
-      if (urlMatch) {
-        // Decode HTML entities (&amp;)
-        const url = urlMatch[1].replace(/&amp;/g, "&");
+      const locationStyle = $(this.SELECTORS.listingMap).first().attr("style");
 
-        // Use URL API to parse query parameters
-        const params = new URL(url).searchParams;
-        const center = params.get("center");
+      if (locationStyle) {
+        // Extract the URL inside background-image
+        const urlMatch = locationStyle.match(/url\(([^)]+)\)/);
+        if (urlMatch) {
+          // Decode HTML entities (&amp;)
+          const url = urlMatch[1].replace(/&amp;/g, "&");
 
-        if (center) {
-          const [lat, lng] = center.split(",").map(Number);
-          exactLocation.latitude = lat;
-          exactLocation.longitude = lng;
+          // Use URL API to parse query parameters
+          const params = new URL(url).searchParams;
+          const center = params.get("center");
+
+          if (center) {
+            const [lat, lng] = center.split(",").map(Number);
+            exactLocation.latitude = lat;
+            exactLocation.longitude = lng;
+          }
         }
       }
+
+      return {
+        id,
+        title: this.cleanText(title),
+        description: this.cleanText(description),
+        ageString: age || "Unknown",
+        currency: price.replace(/[0-9.,\s]/g, "") || "Unknown",
+        price: parseFloat(price.replace(/[^0-9.-]+/g, "")) || 0,
+        imageUrl: photo || "https://support.heberjahiz.com/hc/article_attachments/21013076295570",
+        location: exactLocation,
+        age: 0,
+        status: "pending"
+      };
+    } catch (error) {
+      console.error("Error extracting listing data:", error);
+      throw error;
+    } finally {
+      if (context && !isExternalContext) await context.close();
     }
-
-    if (!isExternalContext) await context!.close();
-
-    return {
-      id,
-      title: this.cleanText(title),
-      description: this.cleanText(description),
-      ageString: age || "Unknown",
-      currency: price.replace(/[0-9.,\s]/g, "") || "Unknown",
-      price: parseFloat(price.replace(/[^0-9.-]+/g, "")) || 0,
-      imageUrl: photo || "https://support.heberjahiz.com/hc/article_attachments/21013076295570",
-      location: exactLocation,
-      age: 0,
-      status: "pending"
-    };
   }
 
   /**
@@ -172,97 +191,105 @@ export class FacebookScraper {
       message: `Launching Facebook Marketplace...`
     });
 
-    const context = await PlaywrightManager.createFacebookContext();
-    const page = await context.newPage();
-    await page.goto(this.generateSearchUrl(settings));
+    let browserContext: BrowserContext | undefined;
 
-    let listingsDivParent: cheerio.Cheerio<Element>;
-    const uniqueListingIds = new Set<string>();
-    let numScrolls = 0;
-    const maxScrolls = settings.maxScrolls || 10; // Default max scrolls if not provided
+    try {
+      browserContext = await PlaywrightManager.createFacebookContext();
+      const page = await browserContext.newPage();
+      await page.goto(this.generateSearchUrl(settings));
 
-    // Send initial progress
-    this.sendScrapeProgress({
-      phase: "scrolling",
-      message: `Starting to scroll through marketplace...`,
-      currentScroll: 0,
-      maxScrolls: maxScrolls,
-      percentage: 0
-    });
+      const maxScrolls = settings.maxScrolls || 10; // Default max scrolls if not provided
 
-    while (uniqueListingIds.size < settings.numListings && numScrolls < maxScrolls) {
-      const newContent = await page.content();
-      const $ = cheerio.load(newContent);
-
-      // If no listings found, break
-      if ($(this.SELECTORS.noListingsFound).filter((_, el) => $(el).text().includes("No listings found")).length > 0) {
-        console.log("No listings found for the given search criteria.");
-        break;
-      }
-
-      console.log("Scrolling to load more listings...");
-      numScrolls++;
-
-      // Send progress for scrolling
+      // Send initial progress
       this.sendScrapeProgress({
         phase: "scrolling",
-        message: `Scrolling through marketplace...`,
-        currentScroll: numScrolls,
+        message: `Starting to scroll through marketplace...`,
+        currentScroll: 0,
         maxScrolls: maxScrolls,
-        percentage: Math.round((uniqueListingIds.size / settings.numListings) * 100)
+        percentage: 0
       });
 
-      await page.evaluate(() => {
-        window.scrollBy(0, window.innerHeight * 2);
-      });
+      // Initialize variables for scrolling and listing extraction
+      let listingsDivParent: cheerio.Cheerio<Element>;
+      const uniqueListingIds = new Set<string>();
+      let numScrolls = 0;
+      //While loop to scroll and extract unique listing IDs
+      while (uniqueListingIds.size < settings.numListings && numScrolls < maxScrolls) {
+        const newContent = await page.content();
+        const $ = cheerio.load(newContent);
 
-      await page.waitForTimeout(2000); // wait for 2 seconds to load more listings
-
-      // Re-select the listings parent div after loading more content
-      listingsDivParent = $(this.SELECTORS.listingDivParent) as cheerio.Cheerio<Element>;
-
-      // Select each child listing div and add to set
-      const elements = listingsDivParent.children("div").toArray();
-      for (const element of elements) {
-        const listingId = this.extractListingIdFromCard(element);
-
-        const listingInRepo = listingId ? ListingRepository.getListingById(listingId) : null;
-        //If listingId is valid and not already in repo or on previous batch
-        if (listingId && listingInRepo === null) {
-          uniqueListingIds.add(listingId);
+        // If no listings found, break
+        if ($(this.SELECTORS.noListingsFound).filter((_, el) => $(el).text().includes("No listings found")).length > 0) {
+          console.log("No listings found for the given search criteria.");
+          break;
         }
+
+        console.log("Scrolling to load more listings...");
+        numScrolls++;
+
+        // Send progress for scrolling
+        this.sendScrapeProgress({
+          phase: "scrolling",
+          message: `Scrolling through marketplace...`,
+          currentScroll: numScrolls,
+          maxScrolls: maxScrolls,
+          percentage: Math.round((uniqueListingIds.size / settings.numListings) * 100)
+        });
+
+        await page.evaluate(() => {
+          window.scrollBy(0, window.innerHeight * 2);
+        });
+
+        await page.waitForTimeout(2000); // wait for 2 seconds to load more listings
+
+        // Re-select the listings parent div after loading more content
+        listingsDivParent = $(this.SELECTORS.listingDivParent) as cheerio.Cheerio<Element>;
+
+        // Select each child listing div and add to set
+        const elements = listingsDivParent.children("div").toArray();
+        for (const element of elements) {
+          const listingId = this.extractListingIdFromCard(element);
+
+          const listingInRepo = listingId ? ListingRepository.getListingById(listingId) : null;
+          //If listingId is valid and not already in repo or on previous batch
+          if (listingId && listingInRepo === null) {
+            uniqueListingIds.add(listingId);
+          }
+        }
+
+        console.log("Current number of unique listings found:", uniqueListingIds.size);
+
+        // Send progress after finding IDs
+        this.sendScrapeProgress({
+          phase: "scrolling",
+          listingsToExtract: settings.numListings,
+          listingsExtracted: uniqueListingIds.size,
+          message: `Found ${uniqueListingIds.size} unique listing${uniqueListingIds.size !== 1 ? "s" : ""}`,
+          currentScroll: numScrolls,
+          maxScrolls: maxScrolls,
+          percentage: Math.round((uniqueListingIds.size / settings.numListings) * 100)
+        });
       }
 
-      console.log("Current number of unique listings found:", uniqueListingIds.size);
+      const finalListings = Array.from(uniqueListingIds).slice(0, settings.numListings);
+      console.log(`Extracted ${finalListings.length} unique listing IDs.`);
 
-      // Send progress after finding IDs
+      // Send final progress for ID extraction phase
       this.sendScrapeProgress({
-        phase: "scrolling",
-        listingsToExtract: settings.numListings,
-        listingsExtracted: uniqueListingIds.size,
-        message: `Found ${uniqueListingIds.size} unique listing${uniqueListingIds.size !== 1 ? "s" : ""}`,
-        currentScroll: numScrolls,
-        maxScrolls: maxScrolls,
-        percentage: Math.round((uniqueListingIds.size / settings.numListings) * 100)
+        phase: "extracting",
+        listingsToExtract: finalListings.length,
+        listingsExtracted: 0,
+        message: `Starting data extraction for ${finalListings.length} listing${finalListings.length !== 1 ? "s" : ""}...`,
+        percentage: 0
       });
+
+      return finalListings;
+    } catch (error) {
+      console.error("Error extracting listing IDs:", error);
+      throw error;
+    } finally {
+      if (browserContext) await browserContext.close();
     }
-
-    // Clean up
-    await context.close();
-
-    const finalListings = Array.from(uniqueListingIds).slice(0, settings.numListings);
-    console.log(`Extracted ${finalListings.length} unique listing IDs.`);
-
-    // Send final progress for ID extraction phase
-    this.sendScrapeProgress({
-      phase: "extracting",
-      listingsToExtract: finalListings.length,
-      listingsExtracted: 0,
-      message: `Starting data extraction for ${finalListings.length} listing${finalListings.length !== 1 ? "s" : ""}...`,
-      percentage: 0
-    });
-
-    return finalListings;
   }
 
   /**

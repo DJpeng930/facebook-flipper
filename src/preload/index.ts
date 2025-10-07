@@ -15,7 +15,8 @@ const api: Api = {
       const listener = (_event: Electron.IpcRendererEvent, progress: ScraperProgress) => callback(progress);
       ipcRenderer.on(IPC_EVENTS.FB_ON_SCRAPE_PROGRESS, listener);
       return () => ipcRenderer.removeListener(IPC_EVENTS.FB_ON_SCRAPE_PROGRESS, listener);
-    }
+    },
+    openBrowser: () => ipcRenderer.invoke(IPC_EVENTS.FB_OPEN_BROWSER)
   },
   llm: {
     analyzeListings: (listings) => ipcRenderer.invoke(IPC_EVENTS.LLM_ANALYZE_LISTINGS, listings)

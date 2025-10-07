@@ -99,7 +99,22 @@ export default function SettingsPage() {
             </Button>
           </div>
 
-          <Separator className="my-6 mb-40" />
+          <Separator className="my-6 " />
+
+          {/* Debug Section */}
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h4 className="text-sm font-medium">Open Browser (Debug)</h4>
+                <p className="text-sm text-muted-foreground">Open a browser window with Facebook context for debugging</p>
+              </div>
+              <Button variant="outline" onClick={() => window.api.facebook.openBrowser()}>
+                Open Browser
+              </Button>
+            </div>
+          </div>
+
+          <Separator className="my-6" />
 
           {/* Data Management Section */}
           <div className="space-y-4">

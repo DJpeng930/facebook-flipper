@@ -1,6 +1,7 @@
-import playwright from "playwright";
+import playwright from "patchright";
 import { app } from "electron";
 import path from "path";
+import type { BrowserContext } from "patchright";
 
 interface BrowserConfig {
   headless?: boolean;
@@ -29,6 +30,17 @@ export class PlaywrightManager {
     } catch (error) {
       console.error("Failed to create facebook browser context:", error);
       throw error;
+    }
+  }
+
+  public static async openBrowserWithFacebookContext() {
+    let context: BrowserContext | undefined;
+    try {
+      context = await PlaywrightManager.createFacebookContext({ headless: false });
+      const page = await context.newPage();
+      await page.goto(`https://www.facebook.com`);
+    } catch {
+      context?.close();
     }
   }
 }
