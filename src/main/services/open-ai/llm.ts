@@ -51,16 +51,21 @@ export class LargeLanguageModel {
 ## PRICING ANALYSIS FRAMEWORK
 
 **Market Research:**
-- Check recent eBay sold listings (filter last 30 days)
-- Compare to current eBay/Poshmark/Mercari active listings
-- Factor in seasonal demand fluctuations
+- Check recent eBay sold listings (filter for the last 30 days).
+- Compare prices to current active listings on eBay or similar platforms.
+- Factor in seasonal demand fluctuations when estimating value.
 
-**Cost Calculations:**
-- eBay fees: 13.25% (12.9% final value + ~$0.30 transaction)
-- PayPal/payment processing: 2.9% + $0.30 (if applicable)
-- Shipping costs: Estimate based on weight/dimensions
-- Local sale: 0% fees but factor in gas/time
-- Cleaning, testing, or minor repair costs
+**Special Cases:**
+- If a listing has a **price of 0**, check the **description** to determine the actual price.
+  - If the description explicitly states the item is **free**, assume it is free.
+  - If the description includes terms like "OBO" (or best offer), "best offer", or "make an offer", estimate a realistic market price based on the item details.
+  - If the description contains a **specific price**, use that price instead of 0.
+  - If its unclear what the product is, like vague titles or descriptions, assign a price of 0. and resale value of 0.
+
+**Multiple Items:**
+- If the listing includes **multiple items**, analyze the description to identify the **best or primary item** being offered.
+  - Focus on the **main or most valuable item** when estimating or assigning a price.
+  - If individual prices are listed, use the price for the **best or primary item**.
 
 **Profit Thresholds:**
 - Minimum target: 40% ROI after all costs
