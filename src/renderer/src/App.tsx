@@ -1,6 +1,6 @@
 import { SidebarInset, SidebarProvider } from "./components/ui/sidebar";
 import { AppSidebar } from "./components/Sidebar";
-import { createBrowserRouter, RouterProvider, Outlet, Navigate } from "react-router";
+import { createHashRouter, RouterProvider, Outlet, Navigate } from "react-router";
 import SearchPage from "./pages/SearchPage";
 import TestPage from "./pages/TestPage";
 import { UserProvider, useUser } from "./contexts/UserContext";
@@ -40,7 +40,7 @@ function NoSidebarLayout() {
   return <Outlet />;
 }
 
-const router = createBrowserRouter([
+const router = createHashRouter([
   {
     path: "/",
     Component: SidebarLayout,
