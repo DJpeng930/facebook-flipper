@@ -79,6 +79,7 @@ export default function SettingsPage() {
       await window.api.listingRepo.deleteAllByStatus("saved");
       await window.api.listingRepo.deleteAllByStatus("pending");
       await window.api.listingRepo.deleteAllByStatus("discarded");
+      window.location.reload();
       toast.success("All listings have been deleted.");
     } catch (error) {
       console.error("Error deleting all listings:", error);

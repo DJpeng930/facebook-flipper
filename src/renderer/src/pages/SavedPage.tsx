@@ -1,5 +1,5 @@
 import ListingCard from "@renderer/components/ListingCard";
-import { Search } from "lucide-react";
+import { ArchiveX, Search } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Listing } from "src/shared/types";
 import Header from "@renderer/components/Header";
@@ -8,6 +8,8 @@ import FilterBar from "@renderer/components/FilterBar";
 import { useListingFilters } from "@renderer/hooks/useListingFilters";
 import { usePagination } from "@renderer/hooks/usePagination";
 import Pagination from "@renderer/components/Pagination";
+import IconTextPage from "@renderer/components/IconTextPage";
+import LoadingPage from "@renderer/components/LoadingPage";
 
 export default function SavedPage() {
   const [listings, setListings] = useState<Listing[]>([]);
@@ -49,12 +51,7 @@ export default function SavedPage() {
 
       <div className="pt-6  p-10">
         {/* Loading State */}
-        {isLoading && (
-          <div className="text-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-            <p className="text-muted-foreground">Loading Listings...</p>
-          </div>
-        )}
+        {isLoading && <LoadingPage />}
 
         {/* Search and Filter Bar */}
         {listings.length > 0 && (
@@ -83,26 +80,10 @@ export default function SavedPage() {
         )}
 
         {/* Empty State - No Results from Search */}
-        {!isLoading && listings.length > 0 && filteredListings.length === 0 && (
-          <div className="flex items-center justify-center min-h-96">
-            <div className="text-center py-12">
-              <Search className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-foreground mb-2">No results found</h3>
-              <p className="text-muted-foreground">Try adjusting your search query</p>
-            </div>
-          </div>
-        )}
+        {!isLoading && listings.length > 0 && filteredListings.length === 0 && <IconTextPage heading="No results found" description="Try adjusting your search query" icon={Search} />}
 
         {/* Empty State - No Saved Listings */}
-        {listings.length === 0 && !isLoading && (
-          <div className="flex items-center justify-center min-h-96">
-            <div className="text-center py-12">
-              <Search className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-foreground mb-2">No saved listings</h3>
-              <p className="text-muted-foreground">You don&apos;t have any listings saved</p>
-            </div>
-          </div>
-        )}
+        {listings.length === 0 && !isLoading && <IconTextPage heading="No saved listings" description="You don't have any listings saved" icon={ArchiveX} />}
       </div>
     </div>
   );

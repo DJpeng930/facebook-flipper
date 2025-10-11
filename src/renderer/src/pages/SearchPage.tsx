@@ -1,11 +1,12 @@
 import { SearchBar } from "@renderer/components/SearchBar";
 import { SearchFilters } from "src/shared/types";
 import ListingCard from "@renderer/components/ListingCard";
-import { Search } from "lucide-react";
+import { Ban, Search } from "lucide-react";
 import Header from "@renderer/components/Header";
 import { useSearch } from "@renderer/contexts/SearchContext";
 import { useEffect } from "react";
 import { Progress } from "@renderer/components/ui/progress";
+import IconTextPage from "@renderer/components/IconTextPage";
 
 export default function MarketplaceSearch() {
   const { listings, isLoading, hasSearched, executeSearch, removeListing, isAnalyzing, isScraping, scraperProgress, setScraperProgress } = useSearch();
@@ -138,15 +139,10 @@ export default function MarketplaceSearch() {
         )}
 
         {/* Empty State */}
-        {(!hasSearched || listings.length === 0) && !isLoading && (
-          <div className="flex items-center justify-center min-h-96">
-            <div className="text-center py-12">
-              <Search className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-foreground mb-2">Ready to find deals?</h3>
-              <p className="text-muted-foreground">Enter a search term above to scrape listings from Facebook Marketplace</p>
-            </div>
-          </div>
-        )}
+        {!hasSearched && !isLoading && <IconTextPage heading="No search performed" description="Enter a search term above to find listings" icon={Search} />}
+
+        {/* Empty State - No Listings Found After Search */}
+        {hasSearched && listings.length === 0 && !isLoading && <IconTextPage heading="No listings found" description="Try adjusting your search criteria" icon={Ban} />}
       </div>
     </div>
   );

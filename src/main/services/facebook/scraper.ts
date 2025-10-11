@@ -2,7 +2,7 @@ import * as cheerio from "cheerio";
 import { PlaywrightManager } from "../browser/playwright";
 import type { Element } from "domhandler";
 import { Listing, ScraperProgress, SearchFilters } from "../../../shared/types";
-import type { BrowserContext } from "patchright";
+import { type BrowserContext } from "patchright";
 import { ListingRepository } from "../repositories/listing-repository";
 import { mainWindow } from "../..";
 import { IPC_EVENTS } from "../../../shared/ipc-events";
@@ -18,8 +18,8 @@ export class FacebookScraper {
     listingAge: "span abbr span",
     listingPhoto: "img",
     listingMap: "div.x1n2onr6.xqtp20y.x6ikm8r.x10wlt62 div.x1o0tod.x10l6tqk.x13vifvy",
-    noListingsFound: "h2"
-  };
+    noListingsFound: ["There are currently no products in your area. Check back later.", "No listings found"]
+  } as const;
 
   /**
    * Retrieves marketplace listings based on the provided settings.
@@ -218,10 +218,10 @@ export class FacebookScraper {
         const newContent = await page.content();
         const $ = cheerio.load(newContent);
 
-        // If no listings found, break
-        if ($(this.SELECTORS.noListingsFound).filter((_, el) => $(el).text().includes("No listings found")).length > 0) {
+        //if page contains not found text return:
+        if (this.SELECTORS.noListingsFound.some((text) => $.text().includes(text))) {
           console.log("No listings found for the given search criteria.");
-          break;
+          break; // exits the while loop
         }
 
         console.log("Scrolling to load more listings...");
@@ -304,15 +304,16 @@ export class FacebookScraper {
    * @private
    */
   private static generateSearchUrl(settings: SearchFilters): string {
-    //https://www.facebook.com/marketplace/sydney/electronics/?query=laptop
-    //https://www.facebook.com/marketplace/sydney/search?query=laptop
+    let baseUrl = `https://www.facebook.com/marketplace/`;
 
-    let baseUrl = `https://www.facebook.com/marketplace/${settings.location || "sydney"}/`;
-
-    if (settings.category === "all") {
+    if (settings.category === "all" && settings.query === "") {
+      // If no category or query, just return main marketplace URL as search params require category or query
+      console.log("Using base URL:", baseUrl);
+      return baseUrl;
+    } else if (settings.category === "all") {
       baseUrl += "search/?";
     } else {
-      baseUrl += `${settings.category}/?`;
+      baseUrl += `category/${settings.category}/?`;
     }
 
     const params = new URLSearchParams();

@@ -1,4 +1,4 @@
-import { MapPin, Clock, TrendingUp, DollarSign, Star, BadgeInfo, X, Check, Trash2 } from "lucide-react";
+import { MapPin, Clock, TrendingUp, DollarSign, Star, X, Check, Trash2, Info } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Button, buttonVariants } from "./ui/button";
 import { Listing } from "src/shared/types";
@@ -13,7 +13,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger
 } from "@renderer/components/ui/alert-dialog";
-import { cn } from "@renderer/lib/utils";
+import { cn, snakeToTitle } from "@renderer/lib/utils";
 interface Props {
   listing: Listing;
   showDiscardButton?: boolean;
@@ -89,10 +89,10 @@ export default function ListingCard({ listing, showDiscardButton = false, showSa
             </div>
             <div className="bg-white rounded-md p-2 border border-gray-200">
               <div className="flex items-center text-xs text-gray-600 mb-1">
-                <BadgeInfo className="h-3 w-3 mr-1 text-green-500" />
+                <Info className="h-3 w-3 mr-1 text-green-500" />
                 Status
               </div>
-              <div className="font-bold text-green-700 text-xs">{listing.valueAnalysis?.recommendation}</div>
+              <div className="font-bold text-green-700 text-xs">{snakeToTitle((listing.valueAnalysis?.recommendation || "null").toLowerCase())}</div>
             </div>
           </div>
 

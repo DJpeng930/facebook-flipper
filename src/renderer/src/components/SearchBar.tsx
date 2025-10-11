@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Search, Funnel, DollarSign, Calendar, MapPin, Package, Hash, LoaderCircle } from "lucide-react";
+import { Search, Funnel, DollarSign, Calendar, Package, Hash, LoaderCircle, Blocks } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "./ui/dropdown-menu";
 import { Button } from "./ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
@@ -114,7 +114,7 @@ export function SearchBar({ onSearch, initialFilters, isLoading }: SearchBarProp
             {/* Category */}
             <div>
               <label className="text-xs font-medium mb-2 flex items-center gap-1.5 text-gray-700 dark:text-gray-200">
-                <Package className="h-3.5 w-3.5 text-indigo-500" />
+                <Blocks className="h-3.5 w-3.5 text-indigo-500" />
                 Category
               </label>
               <Select value={filters.category || "all"} onValueChange={(value) => updateFilter("category", value as SearchFilters["category"])}>
@@ -126,6 +126,26 @@ export function SearchBar({ onSearch, initialFilters, isLoading }: SearchBarProp
                   {CATEGORIES.filter((cat) => cat !== "all").map((category) => (
                     <SelectItem key={category} value={category}>
                       {kebabToTitle(category)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            {/*  Condition */}
+            <div>
+              <label className="text-xs font-medium mb-2 flex items-center gap-1.5 text-gray-700 dark:text-gray-200">
+                <Package className="h-3.5 w-3.5 text-purple-500" />
+                Condition
+              </label>
+              <Select value={filters.itemCondition || "any_condition"} onValueChange={(value) => updateFilter("itemCondition", (value as SearchFilters["itemCondition"]) || undefined)}>
+                <SelectTrigger className="w-full h-9 text-sm bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500">
+                  <SelectValue placeholder="Any" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="any_condition">Any</SelectItem>
+                  {ITEM_CONDITIONS.map((condition) => (
+                    <SelectItem key={condition} value={condition}>
+                      {snakeToTitle(condition)}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -156,48 +176,6 @@ export function SearchBar({ onSearch, initialFilters, isLoading }: SearchBarProp
                 />
               </div>
             </div>
-
-            {/* Location & Condition - Side by side */}
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="text-xs font-medium mb-2 flex items-center gap-1.5 text-gray-700 dark:text-gray-200">
-                  <MapPin className="h-3.5 w-3.5 text-red-500" />
-                  Location
-                </label>
-                <Select value={filters.location || "sydney"} onValueChange={(value) => updateFilter("location", value as SearchFilters["location"])}>
-                  <SelectTrigger className="w-full h-9 text-sm bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500">
-                    <SelectValue placeholder="Sydney" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {LOCATIONS.map((location) => (
-                      <SelectItem key={location} value={location}>
-                        {snakeToTitle(location)}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div>
-                <label className="text-xs font-medium mb-2 flex items-center gap-1.5 text-gray-700 dark:text-gray-200">
-                  <Package className="h-3.5 w-3.5 text-purple-500" />
-                  Condition
-                </label>
-                <Select value={filters.itemCondition || "any_condition"} onValueChange={(value) => updateFilter("itemCondition", (value as SearchFilters["itemCondition"]) || undefined)}>
-                  <SelectTrigger className="w-full h-9 text-sm bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500">
-                    <SelectValue placeholder="Any" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="any_condition">Any</SelectItem>
-                    {ITEM_CONDITIONS.map((condition) => (
-                      <SelectItem key={condition} value={condition}>
-                        {snakeToTitle(condition)}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
           </div>
         </DropdownMenuContent>
       </DropdownMenu>
@@ -215,12 +193,7 @@ export function SearchBar({ onSearch, initialFilters, isLoading }: SearchBarProp
       </div>
 
       {/* Right: Search Button */}
-      <Button
-        onClick={handleSearch}
-        disabled={isLoading || (!filters.query && filters.category === "all")}
-        className="h-12 sm:h-14 aspect-square rounded-l-none  bg-blue-500 hover:bg-blue-600"
-        aria-label="Search"
-      >
+      <Button onClick={handleSearch} disabled={isLoading} className="h-12 sm:h-14 aspect-square rounded-l-none  bg-blue-500 hover:bg-blue-600" aria-label="Search">
         {!isLoading && <Search className="h-4 w-4 sm:h-5 sm:w-5" />}
         {isLoading && <LoaderCircle className="h-5 w-5 animate-spin text-white" />}
       </Button>
