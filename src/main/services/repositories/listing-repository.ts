@@ -7,38 +7,38 @@ interface ListingHashTable {
 
 export class ListingRepository {
   private static store = new Store<{ listings: ListingHashTable }>({
-    name: "listings",
+    name: "savedListings",
     defaults: {
       listings: {}
     }
   });
 
-  public static getListingById(id: string): Listing | null {
+  public static getById(id: string): Listing | null {
     const listings = this.store.get("listings");
     return listings[id] || null;
   }
 
-  public static getPendingListings(): Listing[] {
+  public static getPending(): Listing[] {
     const listings = this.store.get("listings");
     return this.hashToList(listings).filter((listing) => listing.status === "pending");
   }
 
-  public static getDiscardedListings(): Listing[] {
+  public static getDiscarded(): Listing[] {
     const listings = this.store.get("listings");
     return this.hashToList(listings).filter((listing) => listing.status === "discarded");
   }
 
-  public static getSavedListings(): Listing[] {
+  public static getSaved(): Listing[] {
     const listings = this.store.get("listings");
     return this.hashToList(listings).filter((listing) => listing.status === "saved");
   }
 
-  public static getAllListings(): Listing[] {
+  public static getAll(): Listing[] {
     const listings = this.store.get("listings");
     return this.hashToList(listings);
   }
 
-  public static updateListingStatus(id: string, status: ListingStatus): void {
+  public static updateStatus(id: string, status: ListingStatus): void {
     const listings = this.store.get("listings");
     if (listings[id]) {
       listings[id].status = status;
@@ -46,7 +46,7 @@ export class ListingRepository {
     }
   }
 
-  public static saveListings(listings: Listing[]): void {
+  public static saveAll(listings: Listing[]): void {
     const currentListings = this.store.get("listings");
 
     listings.forEach((listing) => {
@@ -54,6 +54,24 @@ export class ListingRepository {
     });
 
     this.store.set("listings", currentListings);
+  }
+
+  public static delete(id: string): void {
+    const listings = this.store.get("listings");
+    if (listings[id]) {
+      delete listings[id];
+      this.store.set("listings", listings);
+    }
+  }
+
+  public static deleteAllByStatus(status: ListingStatus): void {
+    const listings = this.store.get("listings");
+    Object.entries(listings).forEach(([id, listing]) => {
+      if (listing.status === status) {
+        delete listings[id];
+      }
+    });
+    this.store.set("listings", listings);
   }
 
   private static hashToList(listings: ListingHashTable): Listing[] {

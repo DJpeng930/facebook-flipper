@@ -27,7 +27,9 @@ const api: Api = {
     getPending: () => ipcRenderer.invoke(IPC_EVENTS.LISTING_GET_PENDING),
     getDiscarded: () => ipcRenderer.invoke(IPC_EVENTS.LISTING_GET_DISCARDED),
     save: (listing) => ipcRenderer.invoke(IPC_EVENTS.LISTING_SAVE, listing),
-    changeListingStatus: (listingId, status) => ipcRenderer.invoke(IPC_EVENTS.LISTING_CHANGE_STATUS, listingId, status)
+    changeListingStatus: (listingId, status) => ipcRenderer.invoke(IPC_EVENTS.LISTING_CHANGE_STATUS, listingId, status),
+    delete: (listingId) => ipcRenderer.invoke(IPC_EVENTS.LISTING_DELETE, listingId),
+    deleteAllByStatus: (status) => ipcRenderer.invoke(IPC_EVENTS.LISTING_DELETE_ALL_BY_STATUS, status)
   },
 
   settingsRepo: {

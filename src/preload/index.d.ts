@@ -21,6 +21,8 @@ export interface Api {
     getDiscarded: () => Promise<Listing[]>;
     save: (listing: Listing[]) => Promise<boolean>;
     changeListingStatus: (listingId: string, status: ListingStatus) => Promise<void>;
+    delete: (listingId: string) => Promise<void>;
+    deleteAllByStatus: (status: ListingStatus) => Promise<void>;
   };
 
   settingsRepo: {

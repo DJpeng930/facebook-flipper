@@ -1,17 +1,32 @@
 import ListingCard from "@renderer/components/ListingCard";
-import { Search } from "lucide-react";
+import { Search, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Listing } from "src/shared/types";
 import Header from "@renderer/components/Header";
-import { calculateListingsDistance } from "@renderer/lib/utils";
+import { calculateListingsDistance, cn } from "@renderer/lib/utils";
 import FilterBar from "@renderer/components/FilterBar";
 import { useListingFilters } from "@renderer/hooks/useListingFilters";
 import { usePagination } from "@renderer/hooks/usePagination";
 import Pagination from "@renderer/components/Pagination";
+import { Button, buttonVariants } from "@renderer/components/ui/button";
+
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger
+} from "@renderer/components/ui/alert-dialog";
+import { toast } from "sonner";
 
 export default function DiscardedPage() {
   const [listings, setListings] = useState<Listing[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   // Use the custom hook for filtering and sorting
   const { searchQuery, setSearchQuery, sortBy, setSortBy, filteredListings } = useListingFilters(listings);
@@ -41,6 +56,21 @@ export default function DiscardedPage() {
     setListings(listingsWithDistance);
   }
 
+  async function handleDeleteAll() {
+    if (listings.length === 0) return;
+
+    try {
+      setIsDeleting(true);
+      await window.api.listingRepo.deleteAllByStatus("discarded");
+      setListings([]);
+    } catch (error) {
+      console.error("Error deleting all discarded listings:", error);
+      toast.error("Failed to delete listings. Please try again.", { duration: 5000 });
+    } finally {
+      setIsDeleting(false);
+    }
+  }
+
   return (
     <div className="min-h-screen ">
       <Header pageName="Discarded Listings" />
@@ -56,15 +86,40 @@ export default function DiscardedPage() {
 
         {/* Search and Filter Bar */}
         {listings.length > 0 && (
-          <FilterBar
-            searchQuery={searchQuery}
-            onSearchChange={setSearchQuery}
-            sortBy={sortBy}
-            onSortChange={setSortBy}
-            totalCount={listings.length}
-            filteredCount={filteredListings.length}
-            pageType="discarded"
-          />
+          <div className="space-y-4 relative ">
+            <FilterBar
+              searchQuery={searchQuery}
+              onSearchChange={setSearchQuery}
+              sortBy={sortBy}
+              onSortChange={setSortBy}
+              totalCount={listings.length}
+              filteredCount={filteredListings.length}
+              pageType="discarded"
+            />
+            <div className="absolute top-12 right-0 ">
+              <AlertDialog>
+                <AlertDialogTrigger>
+                  <Button variant="destructive" disabled={isDeleting || listings.length === 0}>
+                    <Trash2 className="h-4 w-4" />
+                    {isDeleting ? "Deleting..." : `Delete All (${listings.length})`}
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                    <AlertDialogDescription>Are you sure you want to permanently delete all {listings.length} discarded listings? This action cannot be undone.</AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel className="cursor-pointer">Cancel</AlertDialogCancel>
+
+                    <AlertDialogAction onClick={handleDeleteAll} className={cn("cursor-pointer", buttonVariants({ variant: "destructive" }))}>
+                      Confirm
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </div>
+          </div>
         )}
 
         {/* Results */}

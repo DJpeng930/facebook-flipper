@@ -38,7 +38,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenu>
             {links.map((item) => (
               <SidebarMenuItem key={item.name}>
-                <SidebarMenuButton className={location.pathname === item.url ? "bg-gray-200" : ""} asChild>
+                <SidebarMenuButton className={location.pathname === item.url ? "bg-gray-200 hover:bg-gray-200" : ""} asChild>
                   <Link to={item.url}>
                     <item.icon />
                     <span>{item.name}</span>
@@ -50,7 +50,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
-        <SidebarMenuButton className={location.pathname === "/settings" ? "bg-gray-200" : ""} asChild>
+        <SidebarMenuButton className={location.pathname === "/settings" ? "bg-gray-200 hover:bg-gray-200" : ""} asChild>
           <Link to={"/settings"}>
             <Settings />
             <span>Settings</span>

@@ -2,9 +2,21 @@ import Header from "@renderer/components/Header";
 import { useEffect, useState } from "react";
 import { Input } from "@renderer/components/ui/input";
 import { Label } from "@renderer/components/ui/label";
-import { Button } from "@renderer/components/ui/button";
+import { Button, buttonVariants } from "@renderer/components/ui/button";
 import { Separator } from "@renderer/components/ui/separator";
 import { toast } from "sonner";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger
+} from "@renderer/components/ui/alert-dialog";
+import { cn } from "@renderer/lib/utils";
 
 export default function SettingsPage() {
   const [apiKey, setApiKey] = useState("");
@@ -59,6 +71,18 @@ export default function SettingsPage() {
       console.error("Failed to save settings:", error);
     } finally {
       setIsSaving(false);
+    }
+  }
+
+  async function handleDeleteAll() {
+    try {
+      await window.api.listingRepo.deleteAllByStatus("saved");
+      await window.api.listingRepo.deleteAllByStatus("pending");
+      await window.api.listingRepo.deleteAllByStatus("discarded");
+      toast.success("All listings have been deleted.");
+    } catch (error) {
+      console.error("Error deleting all listings:", error);
+      toast.error("Failed to delete listings. Please try again.", { duration: 5000 });
     }
   }
 
@@ -123,7 +147,25 @@ export default function SettingsPage() {
                 <h4 className="text-sm font-medium">Erase All Listings</h4>
                 <p className="text-sm text-muted-foreground">Delete all saved, pending, and discarded listings</p>
               </div>
-              <Button variant="destructive">Erase Listings</Button>
+
+              <AlertDialog>
+                <AlertDialogTrigger>
+                  <Button variant="destructive">Erase Listings</Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                    <AlertDialogDescription>Are you sure you want to permanently delete all listings? This action cannot be undone.</AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel className="cursor-pointer">Cancel</AlertDialogCancel>
+
+                    <AlertDialogAction onClick={handleDeleteAll} className={cn("cursor-pointer", buttonVariants({ variant: "destructive" }))}>
+                      Confirm
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             </div>
           </div>
         </div>

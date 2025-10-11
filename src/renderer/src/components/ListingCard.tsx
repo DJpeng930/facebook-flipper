@@ -1,8 +1,19 @@
-import { MapPin, Clock, TrendingUp, DollarSign, Star, BadgeInfo, X, Check } from "lucide-react";
+import { MapPin, Clock, TrendingUp, DollarSign, Star, BadgeInfo, X, Check, Trash2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
-import { Button } from "./ui/button";
+import { Button, buttonVariants } from "./ui/button";
 import { Listing } from "src/shared/types";
-
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger
+} from "@renderer/components/ui/alert-dialog";
+import { cn } from "@renderer/lib/utils";
 interface Props {
   listing: Listing;
   showDiscardButton?: boolean;
@@ -21,10 +32,38 @@ export default function ListingCard({ listing, showDiscardButton = false, showSa
     onButtonActionComplete?.();
   }
 
+  async function handleDelete() {
+    await window.api.listingRepo.delete(listing.id);
+    onButtonActionComplete?.();
+  }
+
   return (
-    <Card className="hover:shadow-md transition-all duration-300 p-0 gap-0 overflow-hidden  border-1  h-full flex flex-col">
+    <Card className="hover:shadow-md transition-all duration-300 p-0 gap-0 overflow-hidden  border-1  h-full flex flex-col group">
       <CardHeader className="p-0 relative">
         <img src={listing.imageUrl} alt={listing.title} className="w-full h-40 object-cover" loading="lazy" />
+        {/* //delete button */}
+        <AlertDialog>
+          <AlertDialogTrigger>
+            <Button variant="destructive" size="icon" className="absolute top-2 right-2 h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity duration-200 shadow-lg">
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+              <AlertDialogDescription>
+                Are you sure you want to permanently delete this listing <b>({listing.title})</b>? This action cannot be undone.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel className="cursor-pointer">Cancel</AlertDialogCancel>
+
+              <AlertDialogAction onClick={handleDelete} className={cn("cursor-pointer", buttonVariants({ variant: "destructive" }))}>
+                Confirm
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </CardHeader>
       <CardContent className="p-3 flex-1 flex flex-col">
         <div className="space-y-2 flex-1 flex flex-col">

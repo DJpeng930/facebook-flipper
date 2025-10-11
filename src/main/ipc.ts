@@ -35,23 +35,30 @@ ipcMain.handle(IPC_EVENTS.LLM_ANALYZE_LISTINGS, async (_event, listings) => {
 
 // --- Listing Repo ---
 ipcMain.handle(IPC_EVENTS.LISTING_GET_SAVED, () => {
-  return ListingRepository.getSavedListings();
+  return ListingRepository.getSaved();
 });
 
 ipcMain.handle(IPC_EVENTS.LISTING_GET_PENDING, () => {
-  return ListingRepository.getPendingListings();
+  return ListingRepository.getPending();
 });
 
 ipcMain.handle(IPC_EVENTS.LISTING_GET_DISCARDED, () => {
-  return ListingRepository.getDiscardedListings();
+  return ListingRepository.getDiscarded();
 });
 
 ipcMain.handle(IPC_EVENTS.LISTING_CHANGE_STATUS, (_event, listingId, status) => {
-  ListingRepository.updateListingStatus(listingId, status);
+  ListingRepository.updateStatus(listingId, status);
 });
 
 ipcMain.handle(IPC_EVENTS.LISTING_SAVE, (_event, listings) => {
-  return ListingRepository.saveListings(listings);
+  return ListingRepository.saveAll(listings);
+});
+ipcMain.handle(IPC_EVENTS.LISTING_DELETE, (_event, listingId) => {
+  return ListingRepository.delete(listingId);
+});
+
+ipcMain.handle(IPC_EVENTS.LISTING_DELETE_ALL_BY_STATUS, (_event, status) => {
+  return ListingRepository.deleteAllByStatus(status);
 });
 
 // --- Settings Repo ---

@@ -254,7 +254,7 @@ export class FacebookScraper {
         for (const element of elements) {
           const listingId = this.extractListingIdFromCard(element);
 
-          const listingInRepo = listingId ? ListingRepository.getListingById(listingId) : null;
+          const listingInRepo = listingId ? ListingRepository.getById(listingId) : null;
           //If listingId is valid and not already in repo or on previous batch
           if (listingId && listingInRepo === null) {
             uniqueListingIds.add(listingId);
