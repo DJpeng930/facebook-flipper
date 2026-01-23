@@ -95,11 +95,12 @@ export class FacebookScraper {
    */
   private static async extractListingDataFromPage(id: string, context?: BrowserContext): Promise<Listing> {
     const isExternalContext = context !== undefined;
+    let page;
 
     try {
       if (!isExternalContext) context = await PlaywrightManager.createFacebookContext();
 
-      const page = await context!.newPage();
+      page = await context!.newPage();
 
       await page.goto(`https://www.facebook.com/marketplace/item/${id}`, { timeout: 120000 });
       const content = await page.content();
@@ -166,6 +167,7 @@ export class FacebookScraper {
       console.error("Error extracting listing data:", error);
       throw error;
     } finally {
+      if (page) await page.close();
       if (context && !isExternalContext) await context.close();
     }
   }
