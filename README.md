@@ -39,6 +39,12 @@ Facebook Flipper is a powerful desktop application that automates Facebook Marke
   <img src="images/Pending.png" alt="Listing Analysis" width="400"/>
 </div>
 
+## Watch the Build Process
+
+Want to see how this project was built? Check out the full development process on YouTube:
+
+[![Watch on YouTube](https://img.shields.io/badge/YouTube-Watch%20Video-red?style=for-the-badge&logo=youtube)](https://www.youtube.com/watch?v=jqmfUr_3maI)
+
 ## Getting Started
 
 ### Prerequisites
@@ -48,6 +54,8 @@ Facebook Flipper is a powerful desktop application that automates Facebook Marke
 - **OpenAI API Key**
 - **Google Chrome**
   This project uses Playwright with `channel: "chrome"`, which requires Google Chrome to be installed.
+- **Burner Facebook Account (Recommended)**
+  It's highly recommended to use a dedicated/burner Facebook account, as automated scraping may violate Facebook's Terms of Service and could result in account restrictions or bans.
 
 ### Installation
 
@@ -126,4 +134,10 @@ This project is for educational purposes only. Please ensure you comply with Fac
 
 ## Disclaimer
 
-This tool is intended for personal use only. The author is not responsible for any misuse or violation of Facebook's Terms of Service. Always respect data privacy and platform policies.
+⚠️ **Important**: This tool is intended for educational and personal use only.
+
+- **Account Risk**: Facebook may detect automated activity and restrict or permanently ban your account. It is **strongly recommended** to use a burner/throwaway Facebook account.
+- **Terms of Service**: Using this tool may violate Facebook's Terms of Service.
+- **No Liability**: The author is not responsible for any account bans, restrictions, or other consequences resulting from the use of this tool.
+
+Always respect data privacy and platform policies. Use at your own risk.
