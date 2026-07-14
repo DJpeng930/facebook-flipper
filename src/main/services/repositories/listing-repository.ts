@@ -1,12 +1,36 @@
 import Store from "electron-store";
 import { Listing, ListingStatus } from "../../../shared/types";
+import { getDatabase } from "../database/database";
 
 interface ListingHashTable {
   [id: string]: Listing;
 }
 
+interface ListingRow {
+  id: string;
+  title: string;
+  description: string;
+  image_url: string;
+  status: ListingStatus;
+  price: number;
+  currency: string;
+  location_name: string;
+  location_latitude: number | null;
+  location_longitude: number | null;
+  location_distance: number | null;
+  age_string: string;
+  age: number;
+  value_analysis_json: string | null;
+}
+
+interface SearchObservation {
+  query: string;
+  searchLocation: string | null;
+  radiusKm: number | null;
+}
+
 export class ListingRepository {
-  private static store = new Store<{ listings: ListingHashTable }>({
+  private static legacyStore = new Store<{ listings: ListingHashTable }>({
     name: "savedListings",
     defaults: {
       listings: {}
@@ -14,67 +38,286 @@ export class ListingRepository {
   });
 
   public static getById(id: string): Listing | null {
-    const listings = this.store.get("listings");
-    return listings[id] || null;
+    this.migrateLegacyListings();
+
+    const row = getDatabase().prepare("SELECT * FROM listings WHERE id = ?").get(id) as ListingRow | undefined;
+    return row ? this.rowToListing(row) : null;
   }
 
   public static getPending(): Listing[] {
-    const listings = this.store.get("listings");
-    return this.hashToList(listings).filter((listing) => listing.status === "pending");
+    return this.getByStatus("pending");
   }
 
   public static getDiscarded(): Listing[] {
-    const listings = this.store.get("listings");
-    return this.hashToList(listings).filter((listing) => listing.status === "discarded");
+    return this.getByStatus("discarded");
   }
 
   public static getSaved(): Listing[] {
-    const listings = this.store.get("listings");
-    return this.hashToList(listings).filter((listing) => listing.status === "saved");
+    return this.getByStatus("saved");
   }
 
   public static getAll(): Listing[] {
-    const listings = this.store.get("listings");
-    return this.hashToList(listings);
+    this.migrateLegacyListings();
+
+    return (getDatabase().prepare("SELECT * FROM listings ORDER BY last_seen_at DESC").all() as ListingRow[]).map((row) => this.rowToListing(row));
   }
 
   public static updateStatus(id: string, status: ListingStatus): void {
-    const listings = this.store.get("listings");
-    if (listings[id]) {
-      listings[id].status = status;
-      this.store.set("listings", listings);
-    }
+    this.migrateLegacyListings();
+
+    getDatabase()
+      .prepare(
+        `UPDATE listings
+         SET status = ?, updated_at = ?
+         WHERE id = ?`
+      )
+      .run(status, new Date().toISOString(), id);
   }
 
   public static saveAll(listings: Listing[]): void {
-    const currentListings = this.store.get("listings");
+    this.migrateLegacyListings();
+    this.persistListings(listings, false);
+  }
 
-    listings.forEach((listing) => {
-      currentListings[listing.id] = listing;
-    });
-
-    this.store.set("listings", currentListings);
+  public static saveSearchResults(listings: Listing[], observation: SearchObservation): void {
+    this.migrateLegacyListings();
+    this.persistListings(listings, true, observation);
   }
 
   public static delete(id: string): void {
-    const listings = this.store.get("listings");
-    if (listings[id]) {
-      delete listings[id];
-      this.store.set("listings", listings);
-    }
+    this.migrateLegacyListings();
+    getDatabase().prepare("DELETE FROM listings WHERE id = ?").run(id);
   }
 
   public static deleteAllByStatus(status: ListingStatus): void {
-    const listings = this.store.get("listings");
-    Object.entries(listings).forEach(([id, listing]) => {
-      if (listing.status === status) {
-        delete listings[id];
-      }
-    });
-    this.store.set("listings", listings);
+    this.migrateLegacyListings();
+    getDatabase().prepare("DELETE FROM listings WHERE status = ?").run(status);
   }
 
-  private static hashToList(listings: ListingHashTable): Listing[] {
-    return Object.entries(listings).map(([_id, listing]) => listing);
+  private static getByStatus(status: ListingStatus): Listing[] {
+    this.migrateLegacyListings();
+
+    return (getDatabase().prepare("SELECT * FROM listings WHERE status = ? ORDER BY last_seen_at DESC").all(status) as ListingRow[]).map((row) =>
+      this.rowToListing(row)
+    );
+  }
+
+  private static persistListings(listings: Listing[], createSnapshots: boolean, observation?: SearchObservation): void {
+    if (listings.length === 0) {
+      return;
+    }
+
+    const db = getDatabase();
+    const now = new Date().toISOString();
+
+    const upsertListing = db.prepare(
+      `INSERT INTO listings (
+        id,
+        title,
+        description,
+        image_url,
+        status,
+        price,
+        currency,
+        location_name,
+        location_latitude,
+        location_longitude,
+        location_distance,
+        age_string,
+        age,
+        value_analysis_json,
+        raw_json,
+        first_seen_at,
+        last_seen_at,
+        created_at,
+        updated_at
+      ) VALUES (
+        @id,
+        @title,
+        @description,
+        @imageUrl,
+        @status,
+        @price,
+        @currency,
+        @locationName,
+        @locationLatitude,
+        @locationLongitude,
+        @locationDistance,
+        @ageString,
+        @age,
+        @valueAnalysisJson,
+        @rawJson,
+        @now,
+        @now,
+        @now,
+        @now
+      )
+      ON CONFLICT(id) DO UPDATE SET
+        title = excluded.title,
+        description = excluded.description,
+        image_url = excluded.image_url,
+        status = excluded.status,
+        price = excluded.price,
+        currency = excluded.currency,
+        location_name = excluded.location_name,
+        location_latitude = excluded.location_latitude,
+        location_longitude = excluded.location_longitude,
+        location_distance = excluded.location_distance,
+        age_string = excluded.age_string,
+        age = excluded.age,
+        value_analysis_json = excluded.value_analysis_json,
+        raw_json = excluded.raw_json,
+        last_seen_at = excluded.last_seen_at,
+        updated_at = excluded.updated_at`
+    );
+
+    const insertSnapshot = db.prepare(
+      `INSERT INTO listing_snapshots (
+        listing_id,
+        observed_at,
+        title,
+        description,
+        price,
+        currency,
+        location_name,
+        location_distance,
+        status,
+        raw_json
+      ) VALUES (
+        @id,
+        @now,
+        @title,
+        @description,
+        @price,
+        @currency,
+        @locationName,
+        @locationDistance,
+        @status,
+        @rawJson
+      )`
+    );
+
+    const insertSearchHit = db.prepare(
+      `INSERT INTO listing_search_hits (
+        listing_id,
+        query,
+        search_location,
+        radius_km,
+        hit_at
+      ) VALUES (
+        @id,
+        @query,
+        @searchLocation,
+        @radiusKm,
+        @now
+      )`
+    );
+
+    const getExistingPrice = db.prepare("SELECT price FROM listings WHERE id = ?");
+    const insertPriceChange = db.prepare(
+      `INSERT INTO listing_price_changes (
+        listing_id,
+        old_price,
+        new_price,
+        currency,
+        changed_at
+      ) VALUES (
+        @id,
+        @oldPrice,
+        @newPrice,
+        @currency,
+        @now
+      )`
+    );
+
+    const saveListings = db.transaction((items: Listing[]) => {
+      items.forEach((listing) => {
+        const existing = getExistingPrice.get(listing.id) as { price: number } | undefined;
+        const params = this.listingToSqlParams(listing, now);
+
+        upsertListing.run(params);
+
+        if (createSnapshots) {
+          insertSnapshot.run(params);
+
+          if (observation) {
+            insertSearchHit.run({ ...params, ...observation });
+          }
+
+          if (existing && existing.price !== listing.price) {
+            insertPriceChange.run({
+              id: listing.id,
+              oldPrice: existing.price,
+              newPrice: listing.price,
+              currency: listing.currency || "$",
+              now
+            });
+          }
+        }
+      });
+    });
+
+    saveListings(listings);
+  }
+
+  private static listingToSqlParams(listing: Listing, now: string): Record<string, unknown> {
+    return {
+      id: listing.id,
+      title: listing.title,
+      description: listing.description || "",
+      imageUrl: listing.imageUrl || "",
+      status: listing.status,
+      price: listing.price || 0,
+      currency: listing.currency || "$",
+      locationName: listing.location?.name || "",
+      locationLatitude: listing.location?.latitude ?? null,
+      locationLongitude: listing.location?.longitude ?? null,
+      locationDistance: listing.location?.distance ?? null,
+      ageString: listing.ageString || "",
+      age: listing.age || 0,
+      valueAnalysisJson: listing.valueAnalysis ? JSON.stringify(listing.valueAnalysis) : null,
+      rawJson: JSON.stringify(listing),
+      now
+    };
+  }
+
+  private static rowToListing(row: ListingRow): Listing {
+    return {
+      id: row.id,
+      title: row.title,
+      description: row.description,
+      imageUrl: row.image_url,
+      status: row.status,
+      price: row.price,
+      currency: row.currency,
+      location: {
+        name: row.location_name,
+        latitude: row.location_latitude ?? 0,
+        longitude: row.location_longitude ?? 0,
+        distance: row.location_distance
+      },
+      ageString: row.age_string,
+      age: row.age,
+      valueAnalysis: row.value_analysis_json ? JSON.parse(row.value_analysis_json) : undefined
+    };
+  }
+
+  private static migrateLegacyListings(): void {
+    const db = getDatabase();
+    const migrationKey = "migration.legacy_listings_v1";
+    const migrationComplete = db.prepare("SELECT value_json FROM application_settings WHERE key = ?").get(migrationKey) as { value_json: string } | undefined;
+
+    if (migrationComplete) {
+      return;
+    }
+
+    const listings = Object.values(this.legacyStore.get("listings") || {});
+    this.persistListings(listings, false);
+
+    db.prepare(
+      `INSERT INTO application_settings (key, value_json, updated_at)
+       VALUES (?, ?, ?)
+       ON CONFLICT(key) DO UPDATE SET value_json = excluded.value_json, updated_at = excluded.updated_at`
+    ).run(migrationKey, JSON.stringify(true), new Date().toISOString());
   }
 }

@@ -1,7 +1,7 @@
 import { ipcMain } from "electron";
 import { IPC_EVENTS } from "../shared/ipc-events";
 import { FacebookAuth } from "./services/facebook/auth";
-import { FacebookScraper } from "./services/facebook/scraper";
+import { MarketplaceCollector } from "./services/collection/marketplace-collector";
 import { LargeLanguageModel } from "./services/open-ai/llm";
 import { ListingRepository } from "./services/repositories/listing-repository";
 import { SettingsRepository } from "./services/repositories/settings-repository";
@@ -21,7 +21,7 @@ ipcMain.handle(IPC_EVENTS.FB_LOG_OUT, async () => {
 });
 
 ipcMain.handle(IPC_EVENTS.FB_SCRAPE_MARKET_LISTINGS, async (_event, settings) => {
-  return await FacebookScraper.getMarketplaceListings(settings);
+  return await MarketplaceCollector.collectFacebookListings(settings);
 });
 
 ipcMain.handle(IPC_EVENTS.FB_OPEN_BROWSER, () => {

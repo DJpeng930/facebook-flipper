@@ -3,7 +3,6 @@ import { PlaywrightManager } from "../browser/playwright";
 import type { Element } from "domhandler";
 import { Listing, ScraperProgress, SearchFilters } from "../../../shared/types";
 import { type BrowserContext } from "patchright";
-import { ListingRepository } from "../repositories/listing-repository";
 import { mainWindow } from "../..";
 import { IPC_EVENTS } from "../../../shared/ipc-events";
 
@@ -256,9 +255,8 @@ export class FacebookScraper {
         for (const element of elements) {
           const listingId = this.extractListingIdFromCard(element);
 
-          const listingInRepo = listingId ? ListingRepository.getById(listingId) : null;
-          //If listingId is valid and not already in repo or on previous batch
-          if (listingId && listingInRepo === null) {
+          // If listingId is valid and not already found in this scan, add it.
+          if (listingId && listingId !== "NA") {
             uniqueListingIds.add(listingId);
           }
         }

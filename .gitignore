@@ -6,3 +6,9 @@ out
 *.log*
 .env
 /debug
+.npm-cache
+.electron-cache
+.electron-builder-cache
+.playwright-browsers
+.electron-package-inspect
+*.tgz
