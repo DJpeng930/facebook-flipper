@@ -73,6 +73,50 @@ export interface Listing {
   age: number; // milliseconds since 1970
   valueAnalysis?: Omit<ListingValueAnalysis, "listingId">; // Optional field for value analysis
 }
+
+export type BicycleCategory =
+  | "road"
+  | "mountain"
+  | "gravel"
+  | "hybrid"
+  | "commuter"
+  | "electric"
+  | "bmx"
+  | "kids"
+  | "triathlon"
+  | "cyclocross"
+  | "component_or_accessory"
+  | "unknown";
+
+export type BicycleComponentType = "groupset" | "derailleur" | "brakes" | "fork" | "shock" | "wheels" | "drivetrain" | "frame" | "other";
+
+export interface BicycleComponent {
+  componentType: BicycleComponentType;
+  brand?: string;
+  model?: string;
+  tier?: string;
+  conditionNote?: string;
+  confidence: number;
+  rawText: string;
+}
+
+export interface BicycleIdentification {
+  listingId: string;
+  isBicycle: boolean;
+  brand?: string;
+  modelFamily?: string;
+  exactModelCandidate?: string;
+  alternativeCandidates: string[];
+  probableYear?: number;
+  probableYearRange?: string;
+  category: BicycleCategory;
+  frameMaterial?: string;
+  frameSize?: string;
+  confidence: number;
+  extractionMethod: "deterministic_text";
+  explanation: string;
+  components: BicycleComponent[];
+}
 export interface AppSettings {
   apiKey: string;
   location: {

@@ -1,5 +1,6 @@
 import { Listing, SearchFilters } from "../../../shared/types";
 import { FacebookScraper } from "../facebook/scraper";
+import { BicycleIdentifier } from "../identification/bicycle-identifier";
 import { ListingRepository } from "../repositories/listing-repository";
 
 export class MarketplaceCollector {
@@ -12,6 +13,7 @@ export class MarketplaceCollector {
       searchLocation: settings.location || null,
       radiusKm: null
     });
+    ListingRepository.saveBicycleIdentifications(uniqueListings.map((listing) => BicycleIdentifier.identify(listing)));
 
     return uniqueListings;
   }

@@ -1,5 +1,5 @@
 import Store from "electron-store";
-import { Listing, ListingStatus } from "../../../shared/types";
+import { BicycleIdentification, Listing, ListingStatus } from "../../../shared/types";
 import { getDatabase } from "../database/database";
 
 interface ListingHashTable {
@@ -82,6 +82,116 @@ export class ListingRepository {
   public static saveSearchResults(listings: Listing[], observation: SearchObservation): void {
     this.migrateLegacyListings();
     this.persistListings(listings, true, observation);
+  }
+
+  public static saveBicycleIdentifications(identifications: BicycleIdentification[]): void {
+    this.migrateLegacyListings();
+
+    if (identifications.length === 0) {
+      return;
+    }
+
+    const db = getDatabase();
+    const now = new Date().toISOString();
+
+    const deleteComponents = db.prepare("DELETE FROM bicycle_components WHERE listing_id = ?");
+    const deleteIdentifications = db.prepare("DELETE FROM bicycle_identifications WHERE listing_id = ?");
+    const insertIdentification = db.prepare(
+      `INSERT INTO bicycle_identifications (
+        listing_id,
+        brand,
+        model_family,
+        exact_model_candidate,
+        alternative_candidates_json,
+        probable_year,
+        probable_year_range,
+        category,
+        frame_material,
+        frame_size,
+        confidence,
+        extraction_method,
+        explanation,
+        identified_at
+      ) VALUES (
+        @listingId,
+        @brand,
+        @modelFamily,
+        @exactModelCandidate,
+        @alternativeCandidatesJson,
+        @probableYear,
+        @probableYearRange,
+        @category,
+        @frameMaterial,
+        @frameSize,
+        @confidence,
+        @extractionMethod,
+        @explanation,
+        @now
+      )`
+    );
+    const insertComponent = db.prepare(
+      `INSERT INTO bicycle_components (
+        listing_id,
+        identification_id,
+        component_type,
+        brand,
+        model,
+        tier,
+        condition_note,
+        confidence,
+        raw_text
+      ) VALUES (
+        @listingId,
+        @identificationId,
+        @componentType,
+        @brand,
+        @model,
+        @tier,
+        @conditionNote,
+        @confidence,
+        @rawText
+      )`
+    );
+
+    const saveIdentifications = db.transaction((items: BicycleIdentification[]) => {
+      items.forEach((identification) => {
+        deleteComponents.run(identification.listingId);
+        deleteIdentifications.run(identification.listingId);
+
+        const result = insertIdentification.run({
+          listingId: identification.listingId,
+          brand: identification.brand ?? null,
+          modelFamily: identification.modelFamily ?? null,
+          exactModelCandidate: identification.exactModelCandidate ?? null,
+          alternativeCandidatesJson: JSON.stringify(identification.alternativeCandidates),
+          probableYear: identification.probableYear ?? null,
+          probableYearRange: identification.probableYearRange ?? null,
+          category: identification.isBicycle ? identification.category : `not_bicycle:${identification.category}`,
+          frameMaterial: identification.frameMaterial ?? null,
+          frameSize: identification.frameSize ?? null,
+          confidence: identification.confidence,
+          extractionMethod: identification.extractionMethod,
+          explanation: identification.explanation,
+          now
+        });
+
+        identification.components.forEach((component) => {
+          insertComponent.run({
+            listingId: identification.listingId,
+            identificationId: result.lastInsertRowid,
+            componentType: component.componentType,
+            brand: component.brand ?? null,
+            model: component.model ?? null,
+            tier: component.tier ?? null,
+            conditionNote: component.conditionNote ?? null,
+            confidence: component.confidence,
+            rawText: component.rawText
+          });
+        });
+      });
+    });
+
+    saveIdentifications(identifications);
   }
 
   public static delete(id: string): void {
